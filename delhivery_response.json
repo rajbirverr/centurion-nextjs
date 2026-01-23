@@ -1,0 +1,334 @@
+{
+  "delivery_codes": [
+    {
+      "postal_code": {
+        "max_weight": 0,
+        "city": "Visakhapatnam",
+        "cod": "Y",
+        "inc": "Visakhapatnam_Samatanagar_D (Andhra Pradesh)",
+        "district": "Visakhapatnam",
+        "pin": 530011,
+        "max_amount": 0,
+        "pre_paid": "Y",
+        "cash": "Y",
+        "state_code": "AP",
+        "remarks": "",
+        "pickup": "Y",
+        "repl": "Y",
+        "covid_zone": "G",
+        "country_code": "IN",
+        "is_oda": "N",
+        "protect_blacklist": false,
+        "sort_code": "VSK/ATN",
+        "sun_tat": true,
+        "center": [
+          {
+            "code": "IND530026AAA",
+            "e": "2020-04-17T16:42:58.403",
+            "cn": "Vizag_Gajuwaka (Andhra Pradesh)",
+            "s": "2014-01-23T12:45:30.093",
+            "u": "srinivasan.k",
+            "ud": "2014-01-23T12:45:30.093",
+            "sort_code": "VTZ/GAJ"
+          },
+          {
+            "code": "INAPAANW",
+            "e": "2020-12-31T18:08:06.893",
+            "cn": "Visakhapatnam_Chingntyda_D (Andhra Pradesh)",
+            "s": "2020-04-17T16:42:58.403",
+            "u": "marathe.vs",
+            "sort_code": "VSK/THK",
+            "ud": "2020-04-17T16:42:58.403"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2021-01-13T12:11:15.271",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2020-12-31T18:08:06.893",
+            "u": "marathe.vs",
+            "sort_code": "VSK/ATN",
+            "ud": "2020-12-31T18:08:06.893"
+          },
+          {
+            "code": "NSZ",
+            "e": "2021-01-20T10:31:37.925",
+            "cn": "NSZ",
+            "s": "2021-01-13T12:11:15.271",
+            "u": "rajat",
+            "ud": "2021-01-13T12:11:15.271",
+            "sort_code": "None"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2021-01-22T13:09:59.387",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2021-01-20T10:31:37.925",
+            "u": "rajat",
+            "sort_code": "VSK/ATN",
+            "ud": "2021-01-20T10:31:37.925"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2021-06-04T01:09:19.417",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2021-01-22T13:09:59.387",
+            "u": "marathe.vs",
+            "ud": "2021-01-22T13:09:59.387",
+            "sort_code": "VSK/ATN"
+          },
+          {
+            "code": "NSZ",
+            "e": "2021-06-14T18:16:24.815",
+            "cn": "NSZ",
+            "s": "2021-06-04T01:09:19.417",
+            "u": "aditya.kumar2",
+            "ud": "2021-06-04T01:09:19.417",
+            "sort_code": "None"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2021-06-14T18:27:37.005",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2021-06-14T18:16:24.815",
+            "u": "kundan.singh",
+            "ud": "2021-06-14T18:16:24.815",
+            "sort_code": "VSK/ATN"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2021-06-15T09:09:18.056",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2021-06-14T18:27:37.005",
+            "u": "kundan.singh",
+            "sort_code": "VSK/ATN",
+            "ud": "2021-06-14T18:27:37.005"
+          },
+          {
+            "code": "NSZ",
+            "e": "2021-06-15T09:24:05.760",
+            "cn": "NSZ",
+            "s": "2021-06-15T09:09:18.056",
+            "u": "aditya.kumar2",
+            "ud": "2021-06-15T09:09:18.056",
+            "sort_code": "None"
+          },
+          {
+            "code": "NSZ",
+            "e": "2021-06-18T07:20:55.368",
+            "cn": "NSZ",
+            "s": "2021-06-15T09:24:05.760",
+            "u": "aditya.kumar2",
+            "ud": "2021-06-15T09:24:05.760",
+            "sort_code": "None"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2021-07-13T08:33:36.853",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2021-06-18T07:20:55.368",
+            "u": "indal.saroj1",
+            "ud": "2021-06-18T07:20:55.368",
+            "sort_code": "VSK/ATN"
+          },
+          {
+            "code": "NSZ",
+            "e": "2021-07-23T07:23:38.981",
+            "cn": "NSZ",
+            "s": "2021-07-13T08:33:36.853",
+            "u": "aditya.kumar2",
+            "ud": "2021-07-13T08:33:36.853",
+            "sort_code": "None"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2021-08-25T08:09:31.399",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2021-07-23T07:23:38.981",
+            "u": "aditya.kumar2",
+            "sort_code": "VSK/ATN",
+            "ud": "2021-07-23T07:23:38.981"
+          },
+          {
+            "code": "NSZ",
+            "e": "2021-08-28T09:15:33.864",
+            "cn": "NSZ",
+            "s": "2021-08-25T08:09:31.399",
+            "u": "aditya.kumar2",
+            "sort_code": "None",
+            "ud": "2021-08-25T08:09:31.399"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2021-08-30T08:21:14.654",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2021-08-28T09:15:33.864",
+            "u": "aditya.kumar2",
+            "sort_code": "VSK/ATN",
+            "ud": "2021-08-28T09:15:33.864"
+          },
+          {
+            "code": "NSZ",
+            "e": "2021-09-03T10:07:01.561",
+            "cn": "NSZ",
+            "s": "2021-08-30T08:21:14.654",
+            "u": "aditya.kumar2",
+            "ud": "2021-08-30T08:21:14.654",
+            "sort_code": "None"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2021-09-30T08:00:03.249",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2021-09-03T10:07:01.561",
+            "u": "aditya.kumar2",
+            "sort_code": "VSK/ATN",
+            "ud": "2021-09-03T10:07:01.561"
+          },
+          {
+            "code": "NSZ",
+            "e": "2021-10-04T10:21:04.087",
+            "cn": "NSZ",
+            "s": "2021-09-30T08:00:03.249",
+            "u": "aditya.kumar2",
+            "sort_code": "None",
+            "ud": "2021-09-30T08:00:03.249"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2021-10-19T08:16:18.840",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2021-10-04T10:21:04.087",
+            "u": "aditya.kumar2",
+            "ud": "2021-10-04T10:21:04.087",
+            "sort_code": "VSK/ATN"
+          },
+          {
+            "code": "NSZ",
+            "e": "2021-10-24T13:44:05.564",
+            "cn": "NSZ",
+            "s": "2021-10-19T08:16:18.840",
+            "u": "aditya.kumar2",
+            "sort_code": "None",
+            "ud": "2021-10-19T08:16:18.840"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2021-10-24T14:07:33.940",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2021-10-24T13:44:05.564",
+            "u": "aditya.kumar2",
+            "ud": "2021-10-24T13:44:05.564",
+            "sort_code": "VSK/ATN"
+          },
+          {
+            "code": "NSZ",
+            "e": "2021-10-28T12:25:08.250",
+            "cn": "NSZ",
+            "s": "2021-10-24T14:07:33.940",
+            "u": "aditya.kumar2",
+            "sort_code": "None",
+            "ud": "2021-10-24T14:07:33.940"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2021-12-05T10:32:21.100",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2021-10-28T12:25:08.250",
+            "u": "aditya.kumar2",
+            "sort_code": "VSK/ATN",
+            "ud": "2021-10-28T12:25:08.250"
+          },
+          {
+            "code": "NSZ",
+            "e": "2021-12-08T10:16:01.759",
+            "cn": "NSZ",
+            "s": "2021-12-05T10:32:21.100",
+            "u": "aditya.kumar2",
+            "sort_code": "None",
+            "ud": "2021-12-05T10:32:21.100"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2022-01-06T12:08:47.509",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2021-12-08T10:16:01.759",
+            "u": "aditya.kumar2",
+            "ud": "2021-12-08T10:16:01.759",
+            "sort_code": "VSK/ATN"
+          },
+          {
+            "code": "NSZ",
+            "e": "2022-01-17T10:19:49.775",
+            "cn": "NSZ",
+            "s": "2022-01-06T12:08:47.509",
+            "u": "ashish.ranjan4",
+            "sort_code": "None",
+            "ud": "2022-01-06T12:08:47.509"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2022-02-13T10:07:28.790",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2022-01-17T10:19:49.775",
+            "u": "aditya.kumar2",
+            "ud": "2022-01-17T10:19:49.775",
+            "sort_code": "VSK/ATN"
+          },
+          {
+            "code": "NSZ",
+            "e": "2022-02-19T11:09:38.232",
+            "cn": "NSZ",
+            "s": "2022-02-13T10:07:28.790",
+            "u": "aditya.kumar2",
+            "sort_code": "None",
+            "ud": "2022-02-13T10:07:28.790"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2022-03-12T11:49:42.105",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2022-02-19T11:09:38.232",
+            "u": "aditya.kumar2",
+            "ud": "2022-02-19T11:09:38.232",
+            "sort_code": "VSK/ATN"
+          },
+          {
+            "code": "NSZ",
+            "e": "2022-03-16T10:34:37.998",
+            "cn": "NSZ",
+            "s": "2022-03-12T11:49:42.105",
+            "u": "aditya.kumar2",
+            "sort_code": "None",
+            "ud": "2022-03-12T11:49:42.105"
+          },
+          {
+            "code": "INAPAAQS",
+            "e": "2022-03-19T18:20:36.466",
+            "cn": "Visakhapatnam_Gajuwaka_D (Andhra Pradesh)",
+            "s": "2022-03-16T10:34:37.998",
+            "u": "aditya.kumar2",
+            "ud": "2022-03-16T10:34:37.998",
+            "sort_code": "VSK/ATN"
+          },
+          {
+            "code": "INAPARNJ",
+            "e": "2023-01-26T19:06:41.736",
+            "cn": "Visakhapatnam_Bhanoji_D (Andhra Pradesh)",
+            "s": "2022-03-19T18:20:36.466",
+            "u": "rajdeep.chaudhary",
+            "sort_code": "VSK/ATN",
+            "ud": "2022-03-19T18:20:36.466"
+          },
+          {
+            "code": "INAPAUSE",
+            "cn": "Visakhapatnam_Samatanagar_D (Andhra Pradesh)",
+            "s": "2023-01-26T19:06:41.736",
+            "u": "meenakshi.negi",
+            "ud": "2023-01-26T19:06:41.736",
+            "sort_code": "VSK/ATN"
+          }
+        ]
+      }
+    }
+  ]
+}

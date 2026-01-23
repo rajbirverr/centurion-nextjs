@@ -1,0 +1,127 @@
+"use client"
+
+import React, { useState } from 'react';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi
+} from "./ui/carousel";
+
+interface CategoryItem {
+  id: string;
+  name: string;
+  image: string;
+}
+
+interface CategoryCarouselProps {
+  categories?: CategoryItem[];
+}
+
+const CategoryCarousel: React.FC<CategoryCarouselProps> = ({ categories = [] }) => {
+  // Using setApi to store carousel reference for controls
+  const [, setApi] = useState<CarouselApi | null>(null);
+
+  // Use empty array if no categories
+  const displayItems = categories;
+
+  return (
+    <div>
+      <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
+        {/* Heading */}
+        <div className="text-center mb-10">
+          <h2 className="uppercase text-[#5a4c46] tracking-[0.2em] text-xs font-light mb-2">SHOP BY CATEGORY</h2>
+          <h3 className="text-[#784D2C] text-xl font-normal" style={{ fontFamily: "'Rhode', sans-serif", letterSpacing: '0.01em' }}>JEWELRY COLLECTION</h3>
+          <p className="text-[#5a4c46]/80 text-xs mt-2 max-w-[500px] mx-auto">Explore our handcrafted accessories for every occasion</p>
+        </div>
+
+        {/* Desktop View */}
+        <div className="hidden md:block">
+          <Carousel
+            setApi={setApi}
+            className="w-full"
+            opts={{
+              align: "start",
+              loop: true,
+              slidesToScroll: 5,
+            }}
+          >
+            <CarouselContent>
+              {displayItems.length > 0 ? (
+                displayItems.map((category) => (
+                  <CarouselItem key={category.id} className="basis-1/5">
+                    <div className="pr-[5px] cursor-pointer group">
+                      <div className="aspect-[3/4] overflow-hidden mb-3 bg-[#f5f5f5]">
+                        <img
+                          src={category.image}
+                          alt={category.name}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      </div>
+                      <h3 className="text-[#5a4c46] text-center font-light uppercase text-sm tracking-wide">{category.name}</h3>
+                    </div>
+                  </CarouselItem>
+                ))
+              ) : (
+                <CarouselItem className="basis-1/5">
+                  <div className="pr-4 text-center text-gray-500 text-sm">
+                    <p>No categories available. Add category images from the admin panel.</p>
+                  </div>
+                </CarouselItem>
+              )}
+            </CarouselContent>
+            <div className="flex justify-center mt-6">
+              <CarouselPrevious className="relative static transform-none mx-3 h-10 w-10 bg-transparent border-none text-[#5a4c46] hover:text-[#784D2C] hover:bg-[#fff1e0] transition-colors" />
+              <CarouselNext className="relative static transform-none mx-3 h-10 w-10 bg-transparent border-none text-[#5a4c46] hover:text-[#784D2C] hover:bg-[#fff1e0] transition-colors" />
+            </div>
+          </Carousel>
+        </div>
+
+        {/* Mobile Carousel */}
+        <div className="md:hidden">
+          <Carousel
+            setApi={setApi}
+            className="w-full"
+            opts={{
+              align: "start",
+              loop: false,
+            }}
+          >
+            <CarouselContent>
+              {displayItems.length > 0 ? (
+                displayItems.map((category) => (
+                  <CarouselItem key={category.id} className="basis-3/4 sm:basis-1/2">
+                    <div className="pr-[5px] cursor-pointer">
+                      <div className="aspect-[3/4] overflow-hidden mb-3 bg-[#f5f5f5]">
+                        <img
+                          src={category.image}
+                          alt={category.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <h3 className="text-[#5a4c46] text-center font-light uppercase text-sm tracking-wide">{category.name}</h3>
+                    </div>
+                  </CarouselItem>
+                ))
+              ) : (
+                <CarouselItem className="basis-3/4 sm:basis-1/2">
+                  <div className="pr-4 text-center text-gray-500 text-sm">
+                    <p>No categories available. Add category images from the admin panel.</p>
+                  </div>
+                </CarouselItem>
+              )}
+            </CarouselContent>
+            <div className="flex justify-center mt-4">
+              <CarouselPrevious className="relative static transform-none mx-2 h-8 w-8 bg-transparent border-none text-[#5a4c46]" />
+              <CarouselNext className="relative static transform-none mx-2 h-8 w-8 bg-transparent border-none text-[#5a4c46]" />
+            </div>
+          </Carousel>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CategoryCarousel;
