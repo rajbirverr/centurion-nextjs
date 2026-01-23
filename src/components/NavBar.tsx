@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { 
-  ShopDropdown, 
-  AboutDropdown, 
+import {
+  ShopDropdown,
+  AboutDropdown,
   FuturesDropdown,
   SearchDropdown,
   AccountDropdown,
@@ -30,7 +30,7 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
   const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const [categories, setCategories] = useState<CategoryWithSubcategories[]>([]);
   const [activeMobileCategory, setActiveMobileCategory] = useState<string | null>(null);
-  
+
   // The isHovering state is causing issues with proper closing
   // Let's use refs to track hover state on individual elements instead
   const navItemHoverRef = useRef(false);
@@ -39,7 +39,7 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
   const openTimeoutRef = useRef<number | null>(null);
 
   const navBarRef = useRef<HTMLDivElement>(null);
-  
+
   // Measure navbar height for dropdown positioning
   useEffect(() => {
     const handleResize = () => {
@@ -83,11 +83,11 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       // Only close if we're not hovering on either the dropdown or its trigger
-      if (activeDropdown && 
-          !navItemHoverRef.current && 
-          !dropdownHoverRef.current &&
-          navBarRef.current && 
-          !navBarRef.current.contains(e.target as Node)) {
+      if (activeDropdown &&
+        !navItemHoverRef.current &&
+        !dropdownHoverRef.current &&
+        navBarRef.current &&
+        !navBarRef.current.contains(e.target as Node)) {
         setActiveDropdown(null);
       }
     };
@@ -149,7 +149,7 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
       window.clearTimeout(openTimeoutRef.current);
       openTimeoutRef.current = null;
     }
-    
+
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
   };
 
@@ -164,15 +164,15 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
       window.clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
     }
-    
+
     // Mark that we're hovering on a nav item
     navItemHoverRef.current = true;
-    
+
     // Set a small delay to open dropdown (prevents accidental opening)
     if (openTimeoutRef.current) {
       window.clearTimeout(openTimeoutRef.current);
     }
-    
+
     openTimeoutRef.current = window.setTimeout(() => {
       setActiveDropdown(dropdown);
     }, 100);
@@ -181,12 +181,12 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
   const handleNavItemMouseLeave = () => {
     // Set navItemHover to false and start a timer to close
     navItemHoverRef.current = false;
-    
+
     // Don't close immediately - give user time to move to dropdown
     if (closeTimeoutRef.current) {
       window.clearTimeout(closeTimeoutRef.current);
     }
-    
+
     closeTimeoutRef.current = window.setTimeout(() => {
       // Only close if we're not hovering on either the nav item or dropdown
       if (!navItemHoverRef.current && !dropdownHoverRef.current) {
@@ -201,7 +201,7 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
       window.clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
     }
-    
+
     // Mark that we're hovering on the dropdown
     dropdownHoverRef.current = true;
     setActiveDropdown(dropdown);
@@ -210,12 +210,12 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
   const handleDropdownMouseLeave = () => {
     // Set dropdownHover to false and start a timer to close
     dropdownHoverRef.current = false;
-    
+
     // Don't close immediately - give user time to move to nav item
     if (closeTimeoutRef.current) {
       window.clearTimeout(closeTimeoutRef.current);
     }
-    
+
     closeTimeoutRef.current = window.setTimeout(() => {
       // Only close if we're not hovering on either the nav item or dropdown
       if (!navItemHoverRef.current && !dropdownHoverRef.current) {
@@ -261,7 +261,7 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
         if (e.shiftKey && document.activeElement === focusableElements[0]) {
           e.preventDefault();
           (focusableElements[focusableElements.length - 1] as HTMLElement).focus();
-        } 
+        }
         // If tab is pressed and focus is on last element, move to first element
         else if (!e.shiftKey && document.activeElement === focusableElements[focusableElements.length - 1]) {
           e.preventDefault();
@@ -291,8 +291,8 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
         <p>free shipping on orders over ₹1000</p>
       </div>
 
-      <nav 
-        className={`w-full bg-white border-b border-gray-100 py-4 shadow-sm ${activeDropdown ? 'z-50' : 'z-30'} relative ${isSticky ? 'fixed top-0 left-0 right-0 animate-slideDown' : ''}`} 
+      <nav
+        className={`w-full bg-white border-b border-gray-100 py-4 shadow-sm ${activeDropdown ? 'z-50' : 'z-30'} relative ${isSticky ? 'fixed top-0 left-0 right-0 animate-slideDown' : ''}`}
         ref={navBarRef}
       >
         <div className="max-w-[1440px] mx-auto px-4 md:px-8">
@@ -378,7 +378,7 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
                   Search
                 </button>
               </div>
-              
+
               {/* Account button */}
               <div className="relative">
                 <button
@@ -392,9 +392,9 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
                   Account
                 </button>
               </div>
-              
+
               {/* Cart */}
-              <div 
+              <div
                 onMouseEnter={() => handleNavItemMouseEnter('cart')}
                 onMouseLeave={handleNavItemMouseLeave}
                 className="relative"
@@ -407,11 +407,11 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
                 >
                   <div className="relative w-full h-full flex items-center justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M8 22C8.55228 22 9 21.5523 9 21C9 20.4477 8.55228 20 8 20C7.44772 20 7 20.4477 7 21C7 21.5523 7.44772 22 8 22Z" stroke="#5a4c46" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M19 22C19.5523 22 20 21.5523 20 21C20 20.4477 19.5523 20 19 20C18.4477 20 18 20.4477 18 21C18 21.5523 18.4477 22 19 22Z" stroke="#5a4c46" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M2 2H5L7.31 14.39C7.37481 14.8504 7.6197 15.264 7.98767 15.5583C8.35565 15.8526 8.82491 16.009 9.3 16H18.7C19.1751 16.009 19.6444 15.8526 20.0123 15.5583C20.3803 15.264 20.6252 14.8504 20.69 14.39L22 7H6" stroke="#5a4c46" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M8 22C8.55228 22 9 21.5523 9 21C9 20.4477 8.55228 20 8 20C7.44772 20 7 20.4477 7 21C7 21.5523 7.44772 22 8 22Z" stroke="#5a4c46" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M19 22C19.5523 22 20 21.5523 20 21C20 20.4477 19.5523 20 19 20C18.4477 20 18 20.4477 18 21C18 21.5523 18.4477 22 19 22Z" stroke="#5a4c46" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M2 2H5L7.31 14.39C7.37481 14.8504 7.6197 15.264 7.98767 15.5583C8.35565 15.8526 8.82491 16.009 9.3 16H18.7C19.1751 16.009 19.6444 15.8526 20.0123 15.5583C20.3803 15.264 20.6252 14.8504 20.69 14.39L22 7H6" stroke="#5a4c46" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                    
+
                     {cartItemCount > 0 && (
                       <span className="absolute top-1 right-1 flex items-center justify-center w-5 h-5 rounded-full bg-[#784D2C] text-white text-xs font-medium">
                         {cartItemCount}
@@ -424,8 +424,8 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
 
             {/* Mobile right icons */}
             <div className="md:hidden flex items-center space-x-5">
-              <button 
-                className="text-[#5a4c46] focus:outline-none" 
+              <button
+                className="text-[#5a4c46] focus:outline-none"
                 aria-label="Search"
                 onClick={() => {
                   setShowMobileMenu(false); // Close mobile menu if open
@@ -436,8 +436,8 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </button>
-              <button 
-                className="text-[#5a4c46] focus:outline-none relative" 
+              <button
+                className="text-[#5a4c46] focus:outline-none relative"
                 aria-label="Cart"
                 onClick={() => {
                   setShowMobileMenu(false); // Close mobile menu if open
@@ -488,7 +488,7 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
           onMouseLeave={handleDropdownMouseLeave}
         />
       </div>
-      
+
       {/* Search Dropdown */}
       <div id="search-dropdown" data-dropdown="search">
         <SearchDropdown
@@ -498,7 +498,7 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
           onMouseLeave={handleDropdownMouseLeave}
         />
       </div>
-      
+
       {/* Account Dropdown */}
       <div id="account-dropdown" data-dropdown="account">
         <AccountDropdown
@@ -508,7 +508,7 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
           onMouseLeave={handleDropdownMouseLeave}
         />
       </div>
-      
+
       {/* Cart Dropdown */}
       <div id="cart-dropdown" data-dropdown="cart">
         <CartDropdown
@@ -521,7 +521,7 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
 
       {/* Overlay when dropdown is open on mobile */}
       {activeDropdown && (
-        <div 
+        <div
           className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
           onClick={() => setActiveDropdown(null)}
           aria-hidden="true"
@@ -530,12 +530,12 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
 
       {/* Mobile Menu Overlay */}
       {showMobileMenu && (
-        <div className="fixed inset-0 bg-[#f3f0ef] z-50 overflow-y-auto">
-          <div className="px-4 py-4">
+        <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+          <div className="px-6 py-6">
             {/* Mobile menu header */}
-            <div className="flex justify-between items-center py-2 border-b border-gray-300">
-              <div className="w-5"></div>
-              <Link href="/" className="font-normal text-[#5a4c46] text-2xl" style={{ fontFamily: "'Rhode', sans-serif", letterSpacing: '0.01em' }}>
+            <div className="flex justify-between items-center mb-6">
+              <div className="w-6"></div>
+              <Link href="/" onClick={() => setShowMobileMenu(false)} className="font-normal text-[#5a4c46] text-2xl" style={{ fontFamily: "'Rhode', sans-serif", letterSpacing: '0.01em' }}>
                 centurion
               </Link>
               <button
@@ -550,25 +550,25 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
             </div>
 
             {/* Search input */}
-            <div className="relative mt-5 mb-4">
+            <div className="relative mb-8">
               <input
                 type="text"
                 placeholder="Search"
-                className="w-full bg-white border border-gray-200 pl-10 pr-4 py-2 text-sm focus:outline-none"
+                className="w-full bg-gray-50 border border-gray-100 rounded-full pl-12 pr-4 py-3.5 text-sm text-[#5a4c46] placeholder-gray-400 focus:outline-none focus:border-[#5a4c46]/30 transition-colors"
               />
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
             </div>
 
-            {/* Categories Section - Rhode Style */}
+            {/* Categories Section */}
             {categories.length > 0 && (
-              <div className="mt-4 bg-white border-b border-gray-300">
-                {/* Category Tabs - Horizontal Scrollable */}
-                <div className="overflow-x-auto -mx-4 px-4 scrollbar-hide pb-3 border-b border-gray-200">
-                  <div className="flex space-x-5 min-w-max">
+              <div className="mb-6">
+                {/* Category Tabs */}
+                <div className="overflow-x-auto scrollbar-hide -mx-6 px-6 mb-6">
+                  <div className="flex space-x-6 min-w-max">
                     {categories.map((category, index) => {
                       const isActive = activeMobileCategory === category.slug || (activeMobileCategory === null && index === 0);
                       return (
@@ -577,11 +577,10 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
                           onClick={() => {
                             setActiveMobileCategory(isActive ? null : category.slug);
                           }}
-                          className={`uppercase text-xs tracking-[0.1em] font-medium whitespace-nowrap pb-2 transition-colors ${
-                            isActive
-                              ? 'border-b-2 border-[#5a4c46] text-[#5a4c46]' 
-                              : 'border-b-2 border-transparent text-[#84756f]'
-                          }`}
+                          className={`uppercase text-xs tracking-[0.15em] font-medium whitespace-nowrap pb-2 transition-all duration-200 ${isActive
+                            ? 'text-[#5a4c46] border-b-2 border-[#5a4c46]'
+                            : 'text-gray-400 border-b-2 border-transparent hover:text-gray-600'
+                            }`}
                         >
                           {category.name}
                         </button>
@@ -592,23 +591,23 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
 
                 {/* Subcategories List - Rhode Style Horizontal Row */}
                 {(() => {
-                  const activeCategory = activeMobileCategory !== null 
+                  const activeCategory = activeMobileCategory !== null
                     ? categories.find(c => c.slug === activeMobileCategory)
                     : categories[0];
                   const subcategories = activeCategory?.subcategories || [];
-                  
+
                   if (subcategories.length > 0) {
                     return (
-                      <div className="px-4 py-4">
-                        <div className="flex flex-col gap-3">
+                      <div>
+                        <div className="space-y-5">
                           {subcategories.map((subcategory) => (
                             <Link
                               key={subcategory.id}
                               href={`/all-products?category=${activeCategory?.slug}&subcategory=${subcategory.slug}`}
                               onClick={() => setShowMobileMenu(false)}
-                              className="group flex items-center space-x-3"
+                              className="group flex items-center gap-4"
                             >
-                              <div className="relative flex-shrink-0 w-20 h-20 bg-[#f3f0ef] flex items-center justify-center overflow-hidden">
+                              <div className="relative flex-shrink-0 w-14 h-14 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden">
                                 {subcategory.image_url ? (
                                   <img
                                     src={subcategory.image_url}
@@ -633,27 +632,30 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
                                   </div>
                                 )}
                               </div>
-                              <div>
-                                <h3 className="text-[#5a4c46] uppercase tracking-wider text-xs font-medium mb-0.5">
+                              <div className="flex-1 min-w-0">
+                                <h3 className="text-[#5a4c46] text-sm font-medium tracking-wide">
                                   {subcategory.name}
                                 </h3>
                                 {subcategory.description && (
-                                  <p className="text-[#84756f] text-xs leading-relaxed">
+                                  <p className="text-gray-400 text-xs mt-0.5 truncate">
                                     {subcategory.description}
                                   </p>
                                 )}
                               </div>
+                              <svg className="w-4 h-4 text-gray-300 group-hover:text-[#5a4c46] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
                             </Link>
                           ))}
                         </div>
-                        {/* Shop Button - Centered at bottom */}
-                        <div className="flex justify-center pt-6 mt-2">
+                        {/* Shop Button */}
+                        <div className="flex justify-center mt-8">
                           <Link
                             href={`/all-products?category=${activeCategory?.slug}`}
                             onClick={() => setShowMobileMenu(false)}
-                            className="border border-[#5a4c46] text-[#5a4c46] hover:bg-[#5a4c46] hover:text-white px-10 py-2.5 uppercase text-xs tracking-[0.2em] transition-colors duration-200"
+                            className="border border-[#5a4c46] text-[#5a4c46] px-10 py-3 rounded-full text-xs font-medium tracking-[0.1em] transition-all duration-200 hover:bg-[#5a4c46] hover:text-white"
                           >
-                            Shop {activeCategory?.name.toUpperCase()}
+                            Shop {activeCategory?.name}
                           </Link>
                         </div>
                       </div>
@@ -664,36 +666,44 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
               </div>
             )}
 
+            {/* Divider */}
+            <div className="border-t border-gray-100 my-6"></div>
+
             {/* Navigation links */}
-            <div className="mt-4 border-t border-gray-300 pt-4">
-              <Link href="/all-products" className="block py-3 text-[#5a4c46] uppercase text-sm tracking-wider border-b border-gray-300">
-                SHOP
+            <div>
+              <Link href="/all-products" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100" onClick={() => setShowMobileMenu(false)}>
+                <span>Shop</span>
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
               </Link>
-              <Link href="#" className="block py-3 text-[#5a4c46] uppercase text-sm tracking-wider border-b border-gray-300">
-                ABOUT
+              <Link href="#" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100">
+                <span>About</span>
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
               </Link>
-              <Link href="#" className="block py-3 text-[#5a4c46] uppercase text-sm tracking-wider border-b border-gray-300">
-                CENTURION FUTURES
+              <Link href="#" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100">
+                <span>Centurion Futures</span>
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
               </Link>
-              <Link href="#" className="block py-3 text-[#5a4c46] uppercase text-sm tracking-wider border-b border-gray-300">
-                IMPACT
+              <Link href="#" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100">
+                <span>Impact</span>
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
               </Link>
-              <Link href="#" className="block py-3 text-[#5a4c46] uppercase text-sm tracking-wider border-b border-gray-300">
-                FAQ
+              <Link href="#" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100">
+                <span>FAQ</span>
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
               </Link>
-              <Link href="/account" className="block py-3 text-[#5a4c46] uppercase text-sm tracking-wider border-b border-gray-300">
-                ACCOUNT
+              <Link href="/account" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100" onClick={() => setShowMobileMenu(false)}>
+                <span>Account</span>
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
               </Link>
             </div>
 
             {/* Country selector */}
-            <div className="mt-8">
-              <div className="flex items-center text-[#5a4c46] text-sm">
-                <span className="mr-3">Country/region:</span>
-                <select className="bg-transparent border border-gray-300 py-1 px-2 text-sm" aria-label="Select country or region">
-                  <option>United States (USD $)</option>
-                </select>
-              </div>
+            <div className="mt-8 pb-8">
+              <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Country/region</p>
+              <select className="w-full bg-[#f8f7f6] border-0 rounded-lg py-3 px-4 text-sm text-[#5a4c46] focus:outline-none focus:ring-2 focus:ring-[#5a4c46]/20" aria-label="Select country or region">
+                <option>India (INR ₹)</option>
+                <option>United States (USD $)</option>
+              </select>
             </div>
           </div>
         </div>
