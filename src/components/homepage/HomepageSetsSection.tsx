@@ -191,15 +191,15 @@ export default function HomepageSetsSection({ initialData }: HomepageSetsSection
       }}
     >
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
-        {/* Cream Rectangle Container */}
-        <div className="rounded-2xl px-4 md:px-6 lg:px-8 py-8 md:py-10 lg:py-12" style={{ backgroundColor: '#d4cdc3' }}>
+        {/* Cream Rectangle Container - Title and Filters */}
+        <div className="rounded-t-2xl px-4 md:px-6 lg:px-8 py-8 md:py-10 lg:py-12 mb-6" style={{ backgroundColor: '#d4cdc3' }}>
           {/* Title - EXACT Honeylove styling */}
           <h2 className="font-normal text-white text-[36px] leading-[100%] md:text-[56px] mx-auto max-w-[300px] md:max-w-[800px] mb-12 md:mb-16 text-center">
             {section.title}
           </h2>
 
           {/* Filter Buttons Container - EXACT Honeylove styling with flex-row */}
-          <div className="flex justify-center mb-10 md:mb-14">
+          <div className="flex justify-center">
             <div className="w-full relative flex flex-row rounded-full p-[2px] max-w-[800px] bg-white">
               {filters.map((filter: HomepageSetsFilter) => {
                 const isActive = activeFilterId === filter.id
@@ -219,10 +219,14 @@ export default function HomepageSetsSection({ initialData }: HomepageSetsSection
               })}
             </div>
           </div>
+        </div>
+
+        {/* White Background Container - Products and Button */}
+        <div className="bg-white">
 
           {/* Products Grid - EXACT Honeylove layout */}
           {products.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-10 md:mb-14">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-10 md:mb-14 px-4 md:px-6 lg:px-8">
               {products.map((product) => (
                 <div 
                   key={product.id} 
@@ -271,7 +275,7 @@ export default function HomepageSetsSection({ initialData }: HomepageSetsSection
 
                         {/* Product Name */}
                         <div className="mb-2">
-                          <div className="text-base font-normal text-[#403b38]">
+                          <h4 className="text-sm font-light text-[#403b38] tracking-wide">
                             {expandedProductId === product.id ? (
                               <Link
                                 href={`/product/${product.slug}`}
@@ -303,7 +307,7 @@ export default function HomepageSetsSection({ initialData }: HomepageSetsSection
                                 )}
                               </>
                             )}
-                          </div>
+                          </h4>
                         </div>
 
                         {/* Price */}
@@ -344,7 +348,7 @@ export default function HomepageSetsSection({ initialData }: HomepageSetsSection
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
+            <div className="text-center py-12 px-4 md:px-6 lg:px-8">
               <p className="text-[#2B2B2B]/60">No products found for this filter.</p>
             </div>
           )}

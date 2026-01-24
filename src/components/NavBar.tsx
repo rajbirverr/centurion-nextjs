@@ -45,13 +45,18 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
     const handleResize = () => {
       if (navBarRef.current) {
         setNavHeight(navBarRef.current.offsetHeight);
+        updateDropdownPosition();
       }
     };
 
     handleResize();
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    window.addEventListener('scroll', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleResize);
+    };
+  }, [isSticky]);
 
   // Handle scroll events
   useEffect(() => {
@@ -104,6 +109,8 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
       document.body.style.overflow = 'hidden';
       // Close any open dropdowns when opening mobile menu
       setActiveDropdown(null);
+      // Update navbar position when menu opens
+      updateDropdownPosition();
     } else {
       document.body.style.overflow = '';
     }
@@ -142,12 +149,14 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
   }, []);
 
   const [dropdownTop, setDropdownTop] = useState(0);
+  const [mobileMenuTop, setMobileMenuTop] = useState(0);
 
   // Measure navbar position for dropdown
   const updateDropdownPosition = () => {
     if (navBarRef.current) {
       const rect = navBarRef.current.getBoundingClientRect();
       setDropdownTop(rect.bottom);
+      setMobileMenuTop(rect.bottom);
     }
   };
 
@@ -325,9 +334,9 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
         ref={navBarRef}
       >
         <div className="max-w-[1440px] mx-auto px-4 md:px-8">
-          <div className="flex items-center justify-between py-1">
+          <div className="flex items-center justify-between py-1 min-w-0">
             {/* Left menu items */}
-            <div className="hidden md:flex items-center space-x-10">
+            <div className="hidden md:flex items-center space-x-10 flex-shrink-0">
               {/* Shop dropdown */}
               <div className="relative">
                 <button
@@ -372,7 +381,7 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
             </div>
 
             {/* Mobile menu button */}
-            <div className="md:hidden flex items-center w-20">
+            <div className="md:hidden flex items-center flex-shrink-0" style={{ width: '80px' }}>
               <button
                 className="text-[#5a4c46] focus:outline-none"
                 onClick={toggleMobileMenu}
@@ -386,14 +395,14 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
             </div>
 
             {/* Center logo */}
-            <div className="flex-1 md:flex-none flex items-center justify-center md:justify-start">
-              <Link href="/" className="font-normal text-[#784D2C] text-3xl" style={{ fontFamily: "'Rhode', sans-serif", letterSpacing: '0.01em' }}>
+            <div className="flex-1 md:flex-none flex items-center justify-center md:justify-start min-w-0 px-2">
+              <Link href="/" className="font-normal text-[#784D2C] text-2xl sm:text-3xl whitespace-nowrap" style={{ fontFamily: "'Rhode', sans-serif", letterSpacing: '0.01em' }}>
                 centurion
               </Link>
             </div>
 
             {/* Right menu items */}
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden md:flex items-center space-x-8 flex-shrink-0">
               {/* Search button */}
               <div className="relative">
                 <button
@@ -452,7 +461,7 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
             </div>
 
             {/* Mobile right icons */}
-            <div className="md:hidden flex items-center justify-end space-x-5 w-20">
+            <div className="md:hidden flex items-center justify-end space-x-5 flex-shrink-0" style={{ minWidth: '60px', maxWidth: '80px' }}>
               <button
                 className="text-[#5a4c46] focus:outline-none"
                 aria-label="Search"
@@ -557,29 +566,21 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
         />
       )}
 
-      {/* Mobile Menu Overlay */}
-      {showMobileMenu && (
-        <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
-          <div className="px-6 py-6">
-            {/* Mobile menu header */}
-            <div className="flex justify-between items-center mb-6">
-              <div className="w-6"></div>
-              <Link href="/" onClick={() => setShowMobileMenu(false)} className="font-normal text-[#5a4c46] text-2xl" style={{ fontFamily: "'Rhode', sans-serif", letterSpacing: '0.01em' }}>
-                centurion
-              </Link>
-              <button
-                onClick={toggleMobileMenu}
-                className="text-[#5a4c46] focus:outline-none"
-                aria-label="Close mobile menu"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Search input */}
-            <div className="relative mb-8">
+      {/* Mobile Menu - Opens below navbar */}
+      <div 
+        className={`md:hidden fixed left-0 right-0 bg-white border-b border-gray-100 shadow-lg z-40 overflow-y-auto ${
+          showMobileMenu ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+        }`}
+        style={{ 
+          top: showMobileMenu ? `${navHeight || 73}px` : '0',
+          maxHeight: `calc(100vh - ${navHeight || 73}px)`,
+          transform: showMobileMenu ? 'translateY(0)' : 'translateY(-10px)',
+          transition: 'opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.25s, top 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}
+      >
+        <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-6">
+          {/* Search input */}
+          <div className="relative mb-8">
               <input
                 type="text"
                 placeholder="Search"
@@ -592,151 +593,150 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
               </div>
             </div>
 
-            {/* Categories Section */}
-            {categories.length > 0 && (
-              <div className="mb-6">
-                {/* Category Tabs */}
-                <div className="overflow-x-auto scrollbar-hide -mx-6 px-6 mb-6">
-                  <div className="flex space-x-6 min-w-max">
-                    {categories.map((category, index) => {
-                      const isActive = activeMobileCategory === category.slug || (activeMobileCategory === null && index === 0);
-                      return (
-                        <button
-                          key={category.id}
-                          onClick={() => {
-                            setActiveMobileCategory(isActive ? null : category.slug);
-                          }}
-                          className={`uppercase text-xs tracking-[0.15em] font-medium whitespace-nowrap pb-2 transition-all duration-200 ${isActive
-                            ? 'text-[#5a4c46] border-b-2 border-[#5a4c46]'
-                            : 'text-gray-400 border-b-2 border-transparent hover:text-gray-600'
-                            }`}
-                        >
-                          {category.name}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Subcategories List - Rhode Style Horizontal Row */}
-                {(() => {
-                  const activeCategory = activeMobileCategory !== null
-                    ? categories.find(c => c.slug === activeMobileCategory)
-                    : categories[0];
-                  const subcategories = activeCategory?.subcategories || [];
-
-                  if (subcategories.length > 0) {
+          {/* Categories Section */}
+          {categories.length > 0 && (
+            <div className="mb-6">
+              {/* Category Tabs */}
+              <div className="overflow-x-auto scrollbar-hide -mx-4 md:-mx-8 px-4 md:px-8 mb-6">
+                <div className="flex space-x-6 min-w-max">
+                  {categories.map((category, index) => {
+                    const isActive = activeMobileCategory === category.slug || (activeMobileCategory === null && index === 0);
                     return (
-                      <div>
-                        <div className="space-y-5">
-                          {subcategories.map((subcategory) => (
-                            <Link
-                              key={subcategory.id}
-                              href={`/all-products?category=${activeCategory?.slug}&subcategory=${subcategory.slug}`}
-                              onClick={() => setShowMobileMenu(false)}
-                              className="group flex items-center gap-4"
-                            >
-                              <div className="relative flex-shrink-0 w-14 h-14 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden">
-                                {subcategory.image_url ? (
-                                  <img
-                                    src={subcategory.image_url}
-                                    alt={subcategory.name}
-                                    className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center">
-                                    <svg
-                                      className="w-10 h-10 text-[#84756f]"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={1.5}
-                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                      />
-                                    </svg>
-                                  </div>
-                                )}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <h3 className="text-[#5a4c46] text-sm font-medium tracking-wide">
-                                  {subcategory.name}
-                                </h3>
-                                {subcategory.description && (
-                                  <p className="text-gray-400 text-xs mt-0.5 truncate">
-                                    {subcategory.description}
-                                  </p>
-                                )}
-                              </div>
-                              <svg className="w-4 h-4 text-gray-300 group-hover:text-[#5a4c46] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                              </svg>
-                            </Link>
-                          ))}
-                        </div>
-                        {/* Shop Button */}
-                        <div className="flex justify-center mt-8">
-                          <Link
-                            href={`/all-products?category=${activeCategory?.slug}`}
-                            onClick={() => setShowMobileMenu(false)}
-                            className="border border-[#5a4c46] text-[#5a4c46] px-10 py-3 rounded-full text-xs font-medium tracking-[0.1em] transition-all duration-200 hover:bg-[#5a4c46] hover:text-white"
-                          >
-                            Shop {activeCategory?.name}
-                          </Link>
-                        </div>
-                      </div>
+                      <button
+                        key={category.id}
+                        onClick={() => {
+                          setActiveMobileCategory(isActive ? null : category.slug);
+                        }}
+                        className={`uppercase text-xs tracking-[0.15em] font-medium whitespace-nowrap pb-2 transition-all duration-200 ${isActive
+                          ? 'text-[#5a4c46] border-b-2 border-[#5a4c46]'
+                          : 'text-gray-400 border-b-2 border-transparent hover:text-gray-600'
+                          }`}
+                      >
+                        {category.name}
+                      </button>
                     );
-                  }
-                  return null;
-                })()}
+                  })}
+                </div>
               </div>
-            )}
 
-            {/* Divider */}
-            <div className="border-t border-gray-100 my-6"></div>
+              {/* Subcategories List - Rhode Style Horizontal Row */}
+              {(() => {
+                const activeCategory = activeMobileCategory !== null
+                  ? categories.find(c => c.slug === activeMobileCategory)
+                  : categories[0];
+                const subcategories = activeCategory?.subcategories || [];
 
-            {/* Navigation links */}
-            <div>
-              <Link href="/all-products" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100" onClick={() => setShowMobileMenu(false)}>
-                <span>Shop</span>
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-              </Link>
-              <Link href="#" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100">
-                <span>About</span>
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-              </Link>
-              <Link href="#" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100">
-                <span>Centurion Futures</span>
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-              </Link>
-              <Link href="#" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100">
-                <span>Impact</span>
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-              </Link>
-              <Link href="#" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100">
-                <span>FAQ</span>
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-              </Link>
-              <Link href="/account" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100" onClick={() => setShowMobileMenu(false)}>
-                <span>Account</span>
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-              </Link>
+                if (subcategories.length > 0) {
+                  return (
+                    <div>
+                      <div className="space-y-5">
+                        {subcategories.map((subcategory) => (
+                          <Link
+                            key={subcategory.id}
+                            href={`/all-products?category=${activeCategory?.slug}&subcategory=${subcategory.slug}`}
+                            onClick={() => setShowMobileMenu(false)}
+                            className="group flex items-center gap-4"
+                          >
+                            <div className="relative flex-shrink-0 w-14 h-14 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden">
+                              {subcategory.image_url ? (
+                                <img
+                                  src={subcategory.image_url}
+                                  alt={subcategory.name}
+                                  className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <svg
+                                    className="w-10 h-10 text-[#84756f]"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={1.5}
+                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-[#5a4c46] text-sm font-medium tracking-wide">
+                                {subcategory.name}
+                              </h3>
+                              {subcategory.description && (
+                                <p className="text-gray-400 text-xs mt-0.5 truncate">
+                                  {subcategory.description}
+                                </p>
+                              )}
+                            </div>
+                            <svg className="w-4 h-4 text-gray-300 group-hover:text-[#5a4c46] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </Link>
+                        ))}
+                      </div>
+                      {/* Shop Button */}
+                      <div className="flex justify-center mt-8">
+                        <Link
+                          href={`/all-products?category=${activeCategory?.slug}`}
+                          onClick={() => setShowMobileMenu(false)}
+                          className="border border-[#5a4c46] text-[#5a4c46] px-10 py-3 rounded-full text-xs font-medium tracking-[0.1em] transition-all duration-200 hover:bg-[#5a4c46] hover:text-white"
+                        >
+                          Shop {activeCategory?.name}
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             </div>
+          )}
 
-            {/* Country selector */}
-            <div className="mt-8 pb-8">
-              <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Country/region</p>
-              <select className="w-full bg-[#f8f7f6] border-0 rounded-lg py-3 px-4 text-sm text-[#5a4c46] focus:outline-none focus:ring-2 focus:ring-[#5a4c46]/20" aria-label="Select country or region">
-                <option>India (INR ₹)</option>
-                <option>United States (USD $)</option>
-              </select>
-            </div>
+          {/* Divider */}
+          <div className="border-t border-gray-100 my-6"></div>
+
+          {/* Navigation links */}
+          <div>
+            <Link href="/all-products" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100" onClick={() => setShowMobileMenu(false)}>
+              <span>Shop</span>
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            </Link>
+            <Link href="#" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100">
+              <span>About</span>
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            </Link>
+            <Link href="#" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100">
+              <span>Centurion Futures</span>
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            </Link>
+            <Link href="#" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100">
+              <span>Impact</span>
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            </Link>
+            <Link href="#" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100">
+              <span>FAQ</span>
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            </Link>
+            <Link href="/account" className="flex items-center justify-between py-4 text-[#5a4c46] text-sm font-medium tracking-wide border-b border-gray-100" onClick={() => setShowMobileMenu(false)}>
+              <span>Account</span>
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            </Link>
+          </div>
+
+          {/* Country selector */}
+          <div className="mt-8 pb-8">
+            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Country/region</p>
+            <select className="w-full bg-[#f8f7f6] border-0 rounded-lg py-3 px-4 text-sm text-[#5a4c46] focus:outline-none focus:ring-2 focus:ring-[#5a4c46]/20" aria-label="Select country or region">
+              <option>India (INR ₹)</option>
+              <option>United States (USD $)</option>
+            </select>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 };
