@@ -28,7 +28,7 @@ const CategoryCarousel: React.FC<CategoryCarouselProps> = ({ categories = [] }) 
   const displayItems = categories;
 
   return (
-    <div>
+    <div className="mb-16">
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
         {/* Heading */}
         <div className="text-center mb-10">

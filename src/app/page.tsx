@@ -32,7 +32,7 @@ export default async function HomePage() {
     <main className="App">
       {/* Main home page content */}
       {/* Brand Statement Section with image and scrolling credits */}
-      <section className="mb-4 px-4 md:px-8 lg:px-12 relative" aria-label="Hero Section">
+      <section className="mb-16 px-4 md:px-8 lg:px-12 relative" aria-label="Hero Section">
         <div className="max-w-[1440px] mx-auto">
           {/* Full-width image container - reduced height to fit viewport with scrolling text */}
           <div className="w-full mb-4 relative" style={{ height: '450px' }}>

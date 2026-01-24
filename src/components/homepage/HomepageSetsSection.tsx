@@ -182,7 +182,7 @@ export default function HomepageSetsSection({ initialData }: HomepageSetsSection
 
   return (
     <section 
-      className="w-full bg-white"
+      className="w-full bg-white mb-16"
       onClick={() => {
         // Collapse expanded product when clicking on empty space
         if (expandedProductId) {
@@ -190,7 +190,7 @@ export default function HomepageSetsSection({ initialData }: HomepageSetsSection
         }
       }}
     >
-      <div className="max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 pt-8 md:pt-12 pb-12 md:pb-16">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 pt-0 pb-12 md:pb-16">
         {/* Title - EXACT Honeylove styling */}
         <h2 className="font-normal text-[#2B2B2B] text-[36px] leading-[100%] md:text-[56px] mx-auto max-w-[300px] md:max-w-[800px] mb-12 md:mb-16 text-center">
           {section.title}
@@ -198,7 +198,7 @@ export default function HomepageSetsSection({ initialData }: HomepageSetsSection
 
         {/* Filter Buttons Container - EXACT Honeylove styling with flex-row */}
         <div className="flex justify-center mb-10 md:mb-14">
-          <div className="w-full relative bg-[#D4D4CB] flex flex-row rounded-full p-[2px] max-w-[800px]">
+          <div className="w-full relative flex flex-row rounded-full p-[2px] max-w-[800px]" style={{ backgroundColor: '#d4cdc3' }}>
             {filters.map((filter: HomepageSetsFilter) => {
               const isActive = activeFilterId === filter.id
               return (

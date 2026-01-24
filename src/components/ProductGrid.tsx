@@ -93,12 +93,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products = [] }) => {
   return (
     <div className="mb-16">
       {/* Combined section with white background */}
-      <div className="bg-white py-12 px-4 md:px-8 lg:px-12 shadow-sm border-y border-gray-100">
+      <div className="pt-6 pb-6 md:pt-12 md:pb-12 px-4 md:px-8 lg:px-12 shadow-sm border-y border-gray-100 overflow-visible bg-white">
         <div className="max-w-[1440px] mx-auto">
           {/* Section Title and Description */}
-          <div className="text-center mb-10">
-            <h2 className="uppercase text-[#5a4c46] tracking-[0.2em] text-xs font-light mb-2">EXPLORE</h2>
-            <h3 className="text-[#784D2C] text-xl font-normal" style={{ fontFamily: "'Rhode', sans-serif", letterSpacing: '0.01em' }}>Drip for Days Under ₹500</h3>
+          <div className="text-center mb-2 md:mb-10">
+            <h2 className="uppercase text-[#5a4c46] tracking-[0.2em] text-xs font-light mb-1">EXPLORE</h2>
+            <h3 className="text-[#5a4c46] text-xl font-normal" style={{ fontFamily: "'Rhode', sans-serif", letterSpacing: '0.01em' }}>Drip for Days Under ₹500</h3>
           </div>
 
           {/* Mobile View - Split layout with fixed info */}
@@ -112,66 +112,72 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products = [] }) => {
                 loop: true,
               }}
             >
-              <CarouselContent>
+              <CarouselContent className="-ml-0">
                 {products.length > 0 ? (
                   products.map((product) => (
-                    <CarouselItem key={product.id} className="basis-full">
-                      <div className="p-1">
-                        <div className="h-72 w-full flex items-center justify-center overflow-hidden">
+                    <CarouselItem key={product.id} className="basis-full pl-0">
+                      <div className="p-0">
+                        <div className="h-[30.4rem] md:h-72 w-full overflow-hidden relative rounded-t-2xl">
                           <img
                             src={product.image}
                             alt={product.name}
-                            className="h-full w-full object-contain"
+                            className="w-full h-full object-cover rounded-t-2xl"
                           />
                         </div>
                       </div>
                     </CarouselItem>
                   ))
                 ) : (
-                  <CarouselItem className="basis-full">
+                  <CarouselItem className="basis-full pl-0">
                     <div className="p-1 flex justify-center items-center h-56 text-gray-500">
                       <p>No products available. Add products from the admin panel.</p>
                     </div>
                   </CarouselItem>
                 )}
               </CarouselContent>
-              <div className="flex justify-center mt-4">
-                <CarouselPrevious className="relative static transform-none mx-2 h-8 w-8 bg-transparent border-none text-[#5a4c46]" />
-                <CarouselNext className="relative static transform-none mx-2 h-8 w-8 bg-transparent border-none text-[#5a4c46]" />
+              {/* White Rectangle Container - Arrows Section */}
+              <div className="pt-4 pb-1" style={{ backgroundColor: '#d4cdc3' }}>
+                <div className="flex justify-center items-center">
+                  <CarouselPrevious className="relative static transform-none mx-2 h-8 w-8 bg-transparent border-none text-[#5a4c46]" />
+                  <CarouselNext className="relative static transform-none mx-2 h-8 w-8 bg-transparent border-none text-[#5a4c46]" />
+                </div>
               </div>
             </Carousel>
 
-            {/* Fixed Product Info */}
-            <div className="mt-6 text-center">
-              <h4 className="text-sm font-light text-[#5a4c46] mb-1 tracking-wide">
-                {products[currentIndex]?.name}
-              </h4>
-              <div className="text-xs text-[#5a4c46]/80 mb-5 px-4 leading-relaxed max-w-[300px] mx-auto">
-                <p className="line-clamp-2">
-                  {products[currentIndex]?.description}
-                </p>
+            {/* White Rectangle Container - Product Info Section */}
+            <div className="pb-4 rounded-b-2xl" style={{ backgroundColor: '#d4cdc3' }}>
+              {/* Fixed Product Info */}
+              <div className="text-center pt-1">
+                <h4 className="text-sm font-light text-[#5a4c46] mb-2 tracking-wide">
+                  {products[currentIndex]?.name}
+                </h4>
+                <div className="text-xs text-[#5a4c46]/80 mb-3 px-4 leading-relaxed max-w-[300px] mx-auto">
+                  <p className="line-clamp-2 mb-1">
+                    {products[currentIndex]?.description}
+                  </p>
+                  <button
+                    className="text-[#784D2C] text-xs underline hover:no-underline"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (products[currentIndex]?.id) {
+                        window.location.href = `/product/${products[currentIndex].id}`;
+                      }
+                    }}
+                  >
+                    for more information click
+                  </button>
+                </div>
                 <button
-                  className="text-[#784D2C] text-xs underline mt-1 hover:no-underline"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (products[currentIndex]?.id) {
-                      window.location.href = `/product/${products[currentIndex].id}`;
-                    }
-                  }}
+                  className="w-full max-w-[180px] py-2 px-4 bg-white text-[#5a4c46] text-[11px] uppercase tracking-[0.2em] font-light border border-[#ddd] shadow-sm hover:bg-transparent hover:border-[#5a4c46] hover:text-[#5a4c46] transition-all duration-200 mx-auto block"
                 >
-                  for more information click
+                  ADD TO BAG
+                  <span className="ml-2">₹{products[currentIndex]?.price}</span>
                 </button>
-              </div>
-              <button
-                className="mt-2 w-full max-w-[180px] py-2 px-4 bg-white text-[#5a4c46] text-[11px] uppercase tracking-[0.2em] font-light border border-[#ddd] shadow-sm hover:bg-transparent hover:border-[#5a4c46] hover:text-[#5a4c46] transition-all duration-200"
-              >
-                ADD TO BAG
-                <span className="ml-2">₹{products[currentIndex]?.price}</span>
-              </button>
 
-              {/* Carousel indicator */}
-              <div className="mt-4 text-xs text-[#5a4c46]">
-                {currentIndex + 1} / {products.length}
+                {/* Carousel indicator */}
+                <div className="mt-3 text-xs text-[#5a4c46]">
+                  {currentIndex + 1} / {products.length}
+                </div>
               </div>
             </div>
           </div>
