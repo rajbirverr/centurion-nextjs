@@ -30,6 +30,8 @@ export interface Product {
   in_shine_carousel?: boolean
   in_drip_carousel?: boolean
   in_category_carousel?: boolean
+  in_sale_page?: boolean
+  discount_percentage?: number
   created_at: string
   updated_at: string
 }
@@ -59,6 +61,8 @@ export interface CreateProductData {
   in_shine_carousel?: boolean
   in_drip_carousel?: boolean
   in_category_carousel?: boolean
+  in_sale_page?: boolean
+  discount_percentage?: number
 }
 
 export interface UpdateProductData extends Partial<CreateProductData> {
@@ -304,6 +308,144 @@ export async function updateProductCarouselFlags(
   } catch (error: any) {
     console.error('Error in updateProductCarouselFlags:', error)
     return { success: false, error: error.message || 'Failed to update carousel flags' }
+  }
+}
+
+/**
+ * Update sale page flags for a product
+ */
+export async function updateProductSalePageFlags(
+  productId: string,
+  flags: {
+    in_sale_page?: boolean
+    discount_percentage?: number
+  }
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const user = await getServerUser()
+    if (!user) {
+      return { success: false, error: 'Not authenticated' }
+    }
+
+    const isAdmin = await verifyAdmin(user.id)
+    if (!isAdmin) {
+      return { success: false, error: 'Unauthorized' }
+    }
+
+    const supabase = createAdminClient()
+    const { error } = await supabase
+      .from('products')
+      .update({
+        ...flags,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', productId)
+
+    if (error) {
+      console.error('Error updating sale page flags:', error)
+      return { success: false, error: error.message }
+    }
+
+    revalidatePath('/admin/products')
+    revalidatePath('/sale')
+
+    return { success: true }
+  } catch (error: any) {
+    console.error('Error in updateProductSalePageFlags:', error)
+    return { success: false, error: error.message || 'Failed to update sale page flags' }
+  }
+}
+
+/**
+ * Search products by query string
+ */
+export async function searchProducts(query: string, limit: number = 6): Promise<Array<{
+  id: string
+  name: string
+  slug: string
+  price: string
+  image: string
+  category: string | null
+}>> {
+  try {
+    const supabase = await createServerSupabaseClient()
+    
+    if (!query || query.trim().length === 0) {
+      return []
+    }
+
+    const trimmedQuery = query.trim()
+
+    // First, get the products
+    const { data: products, error: productsError } = await supabase
+      .from('products')
+      .select('id, name, slug, price, category_id')
+      .eq('status', 'published')
+      .ilike('name', `%${trimmedQuery}%`)
+      .limit(limit)
+
+    if (productsError) {
+      console.error('Error searching products:', productsError)
+      return []
+    }
+
+    if (!products || products.length === 0) {
+      return []
+    }
+
+    const productIds = products.map(p => p.id)
+    const categoryIds = [...new Set(products.map(p => p.category_id).filter((id): id is string => Boolean(id)))]
+
+    // Optimized: Fetch images and categories in parallel, but only for the products we found
+    const [imagesResult, categoriesResult] = await Promise.all([
+      // Get images only for the products we found
+      categoryIds.length > 0 ? supabase
+        .from('product_images')
+        .select('product_id, image_url, is_primary')
+        .in('product_id', productIds)
+        .eq('is_primary', true) : Promise.resolve({ data: [], error: null }),
+      
+      // Get categories only for the products we found
+      categoryIds.length > 0 ? supabase
+        .from('categories')
+        .select('id, name')
+        .in('id', categoryIds) : Promise.resolve({ data: [], error: null })
+    ])
+
+    const images = imagesResult.data || []
+    const categories = categoriesResult.data || []
+
+    const categoryMap = new Map(categories.map(cat => [cat.id, cat.name]))
+    const imageMap = new Map<string, string>()
+    
+    // Create image map (product_id -> image_url)
+    images.forEach(img => {
+      if (!imageMap.has(img.product_id)) {
+        imageMap.set(img.product_id, img.image_url)
+      }
+    })
+
+    // Map products with images and categories
+    return products.map((product) => {
+      const imageUrl = imageMap.get(product.id) || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNmOWY5ZjkIi8+PC9zdmc+'
+      
+      const priceNumber = product.price ? Number(product.price) : 0
+      const formattedPrice = isNaN(priceNumber) || priceNumber <= 0
+        ? '₹0'
+        : `₹${priceNumber.toLocaleString('en-IN')}`
+
+      return {
+        id: product.id,
+        name: product.name || 'Unnamed Product',
+        slug: product.slug || '',
+        price: formattedPrice,
+        image: imageUrl,
+        category: product.category_id ? categoryMap.get(product.category_id) || null : null
+      }
+    })
+  } catch (error: any) {
+    console.error('Error in searchProducts:', error)
+    return []
   }
 }
 

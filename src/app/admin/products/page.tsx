@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getAllProducts } from '@/lib/actions/products'
 import { getAllCategories } from '@/lib/actions/categories'
 import CarouselCheckboxes from '@/components/admin/CarouselCheckboxes'
+import SalePageCheckbox from '@/components/admin/SalePageCheckbox'
 
 export const dynamic = 'force-dynamic'
 
@@ -100,12 +101,19 @@ export default async function AdminProductsPage() {
                       {product.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <CarouselCheckboxes
-                      productId={product.id}
-                      inShineCarousel={product.in_shine_carousel || false}
-                      inDripCarousel={product.in_drip_carousel || false}
-                    />
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col gap-3">
+                      <CarouselCheckboxes
+                        productId={product.id}
+                        inShineCarousel={product.in_shine_carousel || false}
+                        inDripCarousel={product.in_drip_carousel || false}
+                      />
+                      <SalePageCheckbox
+                        productId={product.id}
+                        inSalePage={product.in_sale_page || false}
+                        discountPercentage={product.discount_percentage || 0}
+                      />
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <Link

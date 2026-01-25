@@ -60,7 +60,7 @@ const CategoryCarousel: React.FC<CategoryCarouselProps> = ({ categories = [] }) 
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                       </div>
-                      <h3 className="text-[#5a4c46] text-center font-light uppercase text-sm tracking-wide">{category.name}</h3>
+                      <h3 className="text-[#5a4c46] text-center font-light text-sm tracking-wide">{category.name}</h3>
                     </div>
                   </CarouselItem>
                 ))
@@ -101,7 +101,7 @@ const CategoryCarousel: React.FC<CategoryCarouselProps> = ({ categories = [] }) 
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <h3 className="text-[#5a4c46] text-center font-light uppercase text-sm tracking-wide">{category.name}</h3>
+                      <h3 className="text-[#5a4c46] text-center font-light text-sm tracking-wide">{category.name}</h3>
                     </div>
                   </CarouselItem>
                 ))

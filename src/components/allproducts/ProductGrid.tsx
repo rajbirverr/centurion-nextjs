@@ -15,6 +15,8 @@ export type Product = {
   name: string;
   slug?: string;
   price: string;
+  originalPrice?: string;
+  discountPercent?: number;
   image: string;
   colors: Color[];
   category?: { id: string; name: string; slug: string } | null;

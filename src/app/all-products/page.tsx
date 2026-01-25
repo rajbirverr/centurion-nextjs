@@ -29,7 +29,7 @@ const recommendedProducts: Product[] = [
 export default async function AllProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; subcategory?: string }>
+  searchParams: Promise<{ category?: string; subcategory?: string; search?: string }>
 }) {
   const supabase = await createServerSupabaseClient()
 
@@ -90,15 +90,19 @@ export default async function AllProductsPage({
     }
   }
 
-  // Build query - filter by category_id and subcategory_id
+  // Build query - filter by category_id, subcategory_id, or search query
   // Try to select watermark fields if they exist (graceful fallback)
   let query = supabase
     .from('products')
     .select('*')
     .eq('status', 'published')
 
-  // Filter by category_id if category is provided and found
-  if (categoryId) {
+  // Filter by search query if provided
+  if (params.search && params.search.trim().length > 0) {
+    query = query.ilike('name', `%${params.search.trim()}%`)
+  }
+  // Filter by category_id if category is provided and found (and no search query)
+  else if (categoryId) {
     // Only show products with this exact category_id (will exclude NULL automatically)
     query = query.eq('category_id', categoryId)
 

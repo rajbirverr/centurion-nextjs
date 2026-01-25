@@ -14,6 +14,8 @@ type Product = {
   name: string;
   slug?: string;
   price: string;
+  originalPrice?: string;
+  discountPercent?: number;
   image: string;
   colors: Color[];
   category?: { id: string; name: string; slug: string } | null;
@@ -129,7 +131,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onToggleWishlist, is
           <p className="product-line text-[10px] uppercase font-normal tracking-wider mb-0.5 leading-snug">{product.category.name}</p>
         )}
         <h3 className="product-name text-[12px] uppercase font-bold tracking-wider mb-0.5 leading-tight" style={{ fontWeight: '700', color: '#784D2C' }}>{product.name}</h3>
-        <p className="product-price text-[11px] font-normal">{product.price}</p>
+        <div className="product-price text-[11px] font-normal">
+          {product.originalPrice && product.discountPercent ? (
+            <div className="flex items-center gap-2">
+              <span className="text-red-600 font-medium">{product.price}</span>
+              <span className="text-gray-400 line-through text-[10px]">{product.originalPrice}</span>
+              <span className="text-red-600 text-[10px] font-medium">-{product.discountPercent}%</span>
+            </div>
+          ) : (
+            <span>{product.price}</span>
+          )}
+        </div>
 
         <div className="color-options flex justify-center gap-1.5 mt-2">
           {product.colors.map((color, index) => (

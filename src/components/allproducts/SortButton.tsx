@@ -66,47 +66,51 @@ const SortButton: React.FC<SortButtonProps> = ({ currentSort, onSortChange }) =>
     <div className="relative inline-block" ref={sortButtonRef} style={{ overflow: 'visible' }}>
       <button
         onClick={toggleSortDropdown}
-        className="white-glass-button flex items-center text-sm font-light px-4 py-2 rounded-full"
+        className={`group flex items-center gap-2 text-sm font-light px-6 py-2.5 rounded-full transition-all duration-300 ${
+          showSortDropdown
+            ? 'bg-[#5a4c46] text-white shadow-lg'
+            : 'bg-[#f5f5f5] text-[#5a4c46] hover:bg-[#e8e8e8]'
+        }`}
         aria-expanded={showSortDropdown}
         aria-haspopup="true"
       >
-        <span className="mr-1">Sort: {currentSort}</span>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V3" />
+        </svg>
+        <span>Sort: {currentSort}</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="10"
-          height="6"
-          viewBox="0 0 10 6"
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
           fill="none"
-          className={`ml-1 transition-transform duration-200 ${showSortDropdown ? 'rotate-180' : ''}`}
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={`transition-transform duration-300 ${showSortDropdown ? 'rotate-180' : ''}`}
           aria-hidden="true"
         >
-          <path d="M1 1L5 5L9 1" stroke="#403b38" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="m6 9 6 6 6-6"/>
         </svg>
       </button>
 
       {/* Sort dropdown menu */}
       {showSortDropdown && (
         <div
-          className="white-glass-button absolute right-0 top-full mt-2 rounded-2xl p-2 w-52 z-[100] shadow-lg"
+          className="absolute left-0 top-full mt-2 rounded-2xl p-2 w-56 z-[100] bg-white shadow-2xl border border-[#e5e2e0]/50 backdrop-blur-sm"
           role="menu"
           aria-orientation="vertical"
-          style={{ 
-            position: 'absolute', 
-            overflow: 'visible',
-            background: 'rgba(245, 245, 245, 0.3)',
-            backdropFilter: 'blur(0px) saturate(120%)',
-            WebkitBackdropFilter: 'blur(0px) saturate(120%)'
-          }}
         >
           {sortOptions.map((option, index) => (
             <button
               key={option}
               type="button"
               role="menuitem"
-              className={`block w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all duration-200 ${
+              className={`block w-full text-left px-4 py-3 text-sm rounded-xl transition-all duration-200 ${
                 currentSort === option 
-                  ? 'font-medium text-[#403b38] bg-[rgba(230,230,230,0.5)]' 
-                  : 'font-light text-[#403b38] hover:bg-[rgba(230,230,230,0.9)]'
+                  ? 'font-medium text-[#5a4c46] bg-[#f5f5f5]' 
+                  : 'font-light text-[#5a4c46] hover:bg-[#fafafa] hover:translate-x-1'
               } ${index !== sortOptions.length - 1 ? 'mb-1' : ''}`}
               onClick={(e) => handleSortChange(option, e)}
             >
