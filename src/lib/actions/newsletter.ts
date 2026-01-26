@@ -96,6 +96,7 @@ export async function getSubscribers(): Promise<{ success: boolean; data?: Newsl
  */
 export async function addSubscriber(email: string, name?: string): Promise<{ success: boolean; error?: string }> {
   try {
+    console.log('[NEWSLETTER] addSubscriber called for:', email.toLowerCase())
     const supabase = await createServerSupabaseClient()
     
     // Check if already subscribed
@@ -106,7 +107,9 @@ export async function addSubscriber(email: string, name?: string): Promise<{ suc
       .single()
 
     if (existing) {
+      console.log('[NEWSLETTER] Email already exists, is_active:', existing.is_active)
       if (existing.is_active) {
+        console.log('[NEWSLETTER] Email already active - skipping welcome email')
         return { success: true } // Already subscribed
       } else {
         // Reactivate subscription
@@ -134,6 +137,7 @@ export async function addSubscriber(email: string, name?: string): Promise<{ suc
     }
 
     // Add new subscriber
+    console.log('[NEWSLETTER] Adding new subscriber to database...')
     const { error } = await supabase
       .from('newsletter_subscribers')
       .insert({
@@ -142,7 +146,12 @@ export async function addSubscriber(email: string, name?: string): Promise<{ suc
         is_active: true
       })
 
-    if (error) throw error
+    if (error) {
+      console.error('[NEWSLETTER] Database insert error:', error)
+      throw error
+    }
+    
+    console.log('[NEWSLETTER] Subscriber added successfully, now sending welcome email...')
 
     // Automatically send welcome email to new subscribers
     try {
@@ -190,9 +199,10 @@ export async function addSubscriber(email: string, name?: string): Promise<{ suc
       }
     }
 
+    console.log('[NEWSLETTER] addSubscriber completed successfully')
     return { success: true }
   } catch (error: any) {
-    console.error('Error adding subscriber:', error)
+    console.error('[NEWSLETTER] Error adding subscriber:', error)
     return { success: false, error: error.message || 'Failed to add subscriber' }
   }
 }

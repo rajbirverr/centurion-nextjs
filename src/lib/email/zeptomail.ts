@@ -102,7 +102,21 @@ export async function sendZeptoMail(options: ZeptoMailOptions): Promise<ZeptoMai
     })
 
     console.log('[ZEPTOMAIL] Response status:', response.status, response.statusText)
-    const responseData = await response.json()
+    
+    // Handle non-JSON responses
+    let responseData: any
+    const contentType = response.headers.get('content-type')
+    if (contentType && contentType.includes('application/json')) {
+      responseData = await response.json()
+    } else {
+      const text = await response.text()
+      console.error('[ZEPTOMAIL] Non-JSON response:', text)
+      return {
+        success: false,
+        error: `Invalid response format: ${text.substring(0, 200)}`
+      }
+    }
+    
     console.log('[ZEPTOMAIL] Response data:', JSON.stringify(responseData, null, 2))
 
     if (!response.ok) {
