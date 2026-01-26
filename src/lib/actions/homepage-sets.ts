@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, unstable_cache } from 'next/cache'
 import { createServerSupabaseClient, getServerUser } from '@/lib/supabase/server'
 import { createAdminClient, verifyAdmin } from '@/lib/supabase/admin'
 import { getJewelryCategories, getCategoriesWithSubcategories } from './categories'
@@ -46,10 +46,12 @@ export interface HomepageSetsData {
 }
 
 // Get homepage sets section for public display
-export async function getHomepageSetsData(): Promise<HomepageSetsData> {
-  try {
-    // Use admin client to bypass RLS issues - this is safe since it's a server-side function
-    const supabase = createAdminClient()
+// Cached for better performance
+export const getHomepageSetsData = unstable_cache(
+  async (): Promise<HomepageSetsData> => {
+    try {
+      // Use admin client to bypass RLS issues - this is safe since it's a server-side function
+      const supabase = createAdminClient()
 
     // Get section
     const { data: section, error: sectionError } = await supabase
@@ -216,15 +218,21 @@ export async function getHomepageSetsData(): Promise<HomepageSetsData> {
       filters: (filters || []) as HomepageSetsFilter[],
       products
     }
-  } catch (error) {
-    console.error('Error in getHomepageSetsData:', error)
-    return {
-      section: null,
-      filters: [],
-      products: []
+    } catch (error) {
+      console.error('Error in getHomepageSetsData:', error)
+      return {
+        section: null,
+        filters: [],
+        products: []
+      }
     }
+  },
+  ['homepage-sets-data'],
+  {
+    revalidate: 300, // 5 minutes cache
+    tags: ['homepage-sets']
   }
-}
+)
 
 // Get products by category slug (for client components)
 export async function getProductsByCategorySlug(categorySlug: string): Promise<any[]> {

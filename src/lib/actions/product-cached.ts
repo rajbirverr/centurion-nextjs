@@ -1,7 +1,17 @@
 'use server'
 
 import { unstable_cache } from 'next/cache'
-import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
+
+/**
+ * Create a public Supabase client for cached queries (no cookies needed)
+ */
+function createPublicSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
 
 /**
  * Cached function to get product by slug
@@ -9,7 +19,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 export async function getProductBySlug(slug: string) {
   return unstable_cache(
     async () => {
-      const supabase = await createServerSupabaseClient()
+      const supabase = createPublicSupabaseClient()
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -37,7 +47,7 @@ export async function getProductBySlug(slug: string) {
 export async function getProductImagesByProductId(productId: string) {
   return unstable_cache(
     async () => {
-      const supabase = await createServerSupabaseClient()
+      const supabase = createPublicSupabaseClient()
       const { data, error } = await supabase
         .from('product_images')
         .select('image_url, alt_text, is_primary, sort_order')
@@ -66,7 +76,7 @@ export async function getProductImagesByProductId(productId: string) {
 export async function getCategoryById(categoryId: string) {
   return unstable_cache(
     async () => {
-      const supabase = await createServerSupabaseClient()
+      const supabase = createPublicSupabaseClient()
       const { data } = await supabase
         .from('categories')
         .select('id, name, slug')

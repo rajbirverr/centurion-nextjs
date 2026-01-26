@@ -1,7 +1,17 @@
 'use server'
 
 import { unstable_cache } from 'next/cache'
-import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
+
+/**
+ * Create a public Supabase client for cached queries (no cookies needed)
+ */
+function createPublicSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
 
 /**
  * Cached function to get products by category
@@ -14,7 +24,7 @@ export async function getProductsByCategory(
 ) {
   return unstable_cache(
     async () => {
-      const supabase = await createServerSupabaseClient()
+      const supabase = createPublicSupabaseClient()
       
       let query = supabase
         .from('products')
@@ -55,7 +65,7 @@ export async function getProductImages(productIds: string[]) {
   
   return unstable_cache(
     async () => {
-      const supabase = await createServerSupabaseClient()
+      const supabase = createPublicSupabaseClient()
       const { data, error } = await supabase
         .from('product_images')
         .select('product_id, image_url, is_primary')
@@ -85,7 +95,7 @@ export async function getCategoriesByIds(categoryIds: string[]) {
   
   return unstable_cache(
     async () => {
-      const supabase = await createServerSupabaseClient()
+      const supabase = createPublicSupabaseClient()
       const { data, error } = await supabase
         .from('categories')
         .select('id, name, slug')

@@ -1,12 +1,22 @@
 import { Metadata } from 'next'
 import { unstable_cache } from 'next/cache'
-import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 import ProductGridClient from '../all-products/ProductGridClient'
 import { RecommendedProducts, Product } from '@/components/allproducts'
 import { getFilterConfigs } from '@/lib/actions/filter-config'
 import { getJewelryCategories } from '@/lib/actions/categories'
 import { getProductImages, getCategoriesByIds } from '@/lib/actions/products-cached'
 import SaleCategoryFilterBar from '@/components/allproducts/SaleCategoryFilterBar'
+
+/**
+ * Create a public Supabase client for cached queries (no cookies needed)
+ */
+function createPublicSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
 
 // Note: revalidate is not compatible with cacheComponents
 // Caching is handled automatically by cacheComponents and unstable_cache
@@ -35,7 +45,7 @@ export default async function SalePage({
   // Cache category lookup by slug
   const getCategoryBySlug = unstable_cache(
     async (slug: string) => {
-      const supabase = await createServerSupabaseClient()
+      const supabase = createPublicSupabaseClient()
       const { data, error } = await supabase
         .from('categories')
         .select('id, name, slug')
@@ -59,7 +69,7 @@ export default async function SalePage({
   // Cache sale products query
   const getSaleProducts = unstable_cache(
     async (categoryId: string | null) => {
-      const supabase = await createServerSupabaseClient()
+      const supabase = createPublicSupabaseClient()
       let query = supabase
         .from('products')
         .select('*')

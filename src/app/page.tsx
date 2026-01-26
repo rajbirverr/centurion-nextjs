@@ -1,13 +1,10 @@
-import Link from 'next/link';
-import SafeImage from '@/components/common/SafeImage';
-import ProductGrid from '@/components/ProductGrid';
-import CategoryCarousel from '@/components/CategoryCarousel';
-import HomepageSetsSection from '@/components/homepage/HomepageSetsSection';
-import ShineCarousel from '@/components/homepage/ShineCarousel';
-import VisitShopButton from '@/components/homepage/VisitShopButton';
-import { getHomepageData } from '@/lib/actions/homepage';
-import { getHomepageSetsData } from '@/lib/actions/homepage-sets';
-
+import { Suspense } from 'react'
+import HomepageHero from '@/components/homepage/HomepageHero'
+import HomepageShowcase from '@/components/homepage/HomepageShowcase'
+import HomepageProductGrid from '@/components/homepage/HomepageProductGrid'
+import HomepageSetsSection from '@/components/homepage/HomepageSetsSection'
+import HomepageCategoryCarousel from '@/components/homepage/HomepageCategoryCarousel'
+import { getHomepageSetsData } from '@/lib/actions/homepage-sets'
 
 export const metadata = {
   title: 'CENTURION - Luxury Jewelry & Shine',
@@ -18,150 +15,34 @@ export const metadata = {
 // Caching is handled automatically by cacheComponents
 
 export default async function HomePage() {
-  // Fetch all data in parallel on the server
-  const [homepageData, homepageSetsData] = await Promise.all([
-    getHomepageData(),
-    getHomepageSetsData()
-  ]);
-
-  const {
-    heroImageUrl,
-    showcaseCardImageUrl,
-    shineCarouselProducts,
-    dripCarouselProducts,
-    categoryCarouselItems
-  } = homepageData;
+  // Start fetching homepageSetsData but don't await - let it stream in
+  // This allows the page to start rendering immediately
+  const homepageSetsDataPromise = getHomepageSetsData()
 
   return (
     <main className="App">
-      {/* Main home page content */}
-      {/* Brand Statement Section with image and scrolling credits */}
-      <section className="mb-16 px-4 md:px-8 lg:px-12 relative" aria-label="Hero Section">
-        <div className="max-w-[1440px] mx-auto">
-          {/* Full-width image container - reduced height to fit viewport with scrolling text */}
-          <div className="w-full relative" style={{ height: '450px' }}>
-            {/* Background image */}
-            <div className="absolute inset-0 w-full h-full rounded-t-2xl overflow-hidden">
-              {heroImageUrl ? (
-                <div className="w-full h-full" style={{
-                  backgroundImage: `url('${heroImageUrl}')`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center 2%'
-                }}></div>
-              ) : (
-                <div className="w-full h-full bg-gray-100 animate-pulse"></div>
-              )}
-            </div>
-          </div>
+      {/* Hero section - renders immediately, image streams in */}
+      <HomepageHero />
 
-          {/* Cream Rectangle Container - Text Content */}
-          <div className="w-full mb-6 rounded-b-2xl px-4 py-6 md:py-8" style={{ backgroundColor: '#d4cdc3' }}>
-            <h2 className="uppercase text-[#5a4c46] tracking-[0.2em] text-xs font-light mb-3 text-center">
-              WHAT WE&apos;RE ALL ABOUT
-            </h2>
+      {/* Showcase section - streams in with Suspense */}
+      <HomepageShowcase />
 
-            {/* Credits container with mask for fade out effect - reduced height */}
-            <div className="credits-container-compact relative">
-              {/* Brand logo that toggles visibility */}
-              <div className="brand-logo text-center">
-                <h1 className="text-[#5a4c46] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-wider w-full text-center"
-                  style={{
-                    fontFamily: "'Rhode', sans-serif",
-                    textAlign: "center"
-                  }}>
-                  CENTURION
-                </h1>
-                <div className="w-24 h-0.5 bg-[#784D2C] my-2 mx-auto"></div>
-              </div>
+      {/* Product Grid - streams in with Suspense */}
+      <HomepageProductGrid />
 
-              {/* Scrolling credits content */}
-              <div className="credits-content">
-                <div className="text-center py-3">
-                  <p className="text-[#5a4c46] text-base md:text-lg lg:text-xl font-normal tracking-wide leading-relaxed max-w-[900px] mx-auto">
-                    Centurion makes jewelry that&apos;s playful, pretty, and totally extra — for days when you wanna shine like you mean it (and nights when you really do)
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Homepage Sets Section - streams in with Suspense */}
+      <Suspense fallback={<div className="mb-16 h-96 bg-gray-100 animate-pulse"></div>}>
+        <HomepageSetsSectionWrapper dataPromise={homepageSetsDataPromise} />
+      </Suspense>
 
-      {/* Jewelry Showcase Grid - Two cards side by side */}
-      <section className="mb-16 px-4 md:px-8 lg:px-12" aria-label="Featured Collections">
-        <div className="max-w-[1440px] mx-auto">
-          {/* Section Title */}
-          <div className="text-center mb-10">
-            <h2 className="uppercase text-[#5a4c46] tracking-[0.2em] text-xs font-light mb-2">FEATURED COLLECTIONS</h2>
-            <h3 className="text-[#784D2C] text-xl font-normal" style={{ fontFamily: "'Rhode', sans-serif", letterSpacing: '0.01em' }}>Our Exclusive Designs</h3>
-          </div>
-
-          {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* First Jewelry Card */}
-            <div className="relative overflow-hidden rounded-3xl bg-black group cursor-pointer shadow-lg">
-              <div className="aspect-[4/5] relative">
-                {showcaseCardImageUrl ? (
-                  <>
-                    <SafeImage
-                      src={showcaseCardImageUrl}
-                      alt="Luxury jewelry collection"
-                      fill
-                      className="object-cover object-center"
-                      style={{ objectPosition: "center 10%" }}
-                      priority
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-
-                    {/* Text overlay - bottom left corner */}
-                    <div className="absolute bottom-0 left-0 p-6 sm:p-8 z-10 pointer-events-none">
-                      {/* Large bold title */}
-                      <h3 className="text-white text-3xl sm:text-4xl md:text-5xl font-bold mb-2 leading-tight" style={{
-                        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif',
-                        fontWeight: '700',
-                        letterSpacing: '-0.02em'
-                      }}>
-                        The<br />
-                        <span style={{ fontWeight: '700' }}>Jewelry</span>
-                      </h3>
-                      {/* Smaller subtitle */}
-                      <p className="text-white text-sm sm:text-base font-normal mb-4" style={{
-                        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif',
-                        fontWeight: '400',
-                        letterSpacing: '0.01em'
-                      }}>
-                        Collection
-                      </p>
-                      {/* Visit shop button - always visible */}
-                      <VisitShopButton />
-                    </div>
-                  </>
-                ) : (
-                  <div className="absolute inset-0 w-full h-full bg-gray-200 animate-pulse"></div>
-                )}
-              </div>
-            </div>
-
-            {/* Second Jewelry Card with Shine Carousel */}
-            <div className="relative overflow-hidden rounded-3xl bg-black group shadow-lg">
-              <div className="aspect-[4/5] relative">
-                {/* Shine Carousel - fills entire card */}
-                <ShineCarousel products={shineCarouselProducts} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Product Grid / Drip Carousel Section */}
-      <ProductGrid products={dripCarouselProducts} />
-
-      {/* Homepage Sets Section */}
-      <HomepageSetsSection initialData={homepageSetsData} />
-
-      {/* Category Carousel Section */}
-      <CategoryCarousel categories={categoryCarouselItems} />
-
+      {/* Category Carousel - streams in with Suspense */}
+      <HomepageCategoryCarousel />
     </main>
   );
+}
+
+// Wrapper component to handle the promise
+async function HomepageSetsSectionWrapper({ dataPromise }: { dataPromise: Promise<any> }) {
+  const homepageSetsData = await dataPromise
+  return <HomepageSetsSection initialData={homepageSetsData} />
 }

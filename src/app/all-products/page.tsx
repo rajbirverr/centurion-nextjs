@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { unstable_cache } from 'next/cache'
-import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 import ProductGridClient from './ProductGridClient'
 import { RecommendedProducts, WishlistPage, Product } from '@/components/allproducts'
 import { getFilterConfigs } from '@/lib/actions/filter-config'
@@ -8,6 +8,16 @@ import { getJewelryCategories, getSubcategoriesByCategoryId } from '@/lib/action
 import { getProductsByCategory, getProductImages, getCategoriesByIds } from '@/lib/actions/products-cached'
 import CategoryFilterBar from '@/components/allproducts/CategoryFilterBar'
 import SubcategoryGrid from '@/components/allproducts/SubcategoryGrid'
+
+/**
+ * Create a public Supabase client for cached queries (no cookies needed)
+ */
+function createPublicSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
 
 // Note: revalidate is not compatible with cacheComponents
 // Caching is handled automatically by cacheComponents and unstable_cache
@@ -44,15 +54,13 @@ export default async function AllProductsPage({
 }: {
   searchParams: Promise<{ category?: string; subcategory?: string; search?: string }>
 }) {
-  const supabase = await createServerSupabaseClient()
-
   // AWAIT searchParams in Next.js 15+
   const params = await searchParams
 
   // Cache category lookup by slug
   const getCategoryBySlug = unstable_cache(
     async (slug: string) => {
-      const supabase = await createServerSupabaseClient()
+      const supabase = createPublicSupabaseClient()
       const { data, error } = await supabase
         .from('categories')
         .select('id, name, slug')
@@ -60,7 +68,7 @@ export default async function AllProductsPage({
         .single()
       return { data, error }
     },
-    ['category-by-slug'],
+    [`category-by-slug-${params.category || 'none'}`],
     { revalidate: 3600, tags: ['categories'] }
   )
 
@@ -105,7 +113,7 @@ export default async function AllProductsPage({
   // Cache subcategory lookup
   const getSubcategoryBySlug = unstable_cache(
     async (categoryId: string, slug: string) => {
-      const supabase = await createServerSupabaseClient()
+      const supabase = createPublicSupabaseClient()
       const { data } = await supabase
         .from('category_subcategories')
         .select('id')

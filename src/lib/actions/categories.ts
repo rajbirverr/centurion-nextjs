@@ -3,6 +3,17 @@
 import { revalidatePath, unstable_cache } from 'next/cache'
 import { createServerSupabaseClient, getServerUser } from '@/lib/supabase/server'
 import { createAdminClient, verifyAdmin } from '@/lib/supabase/admin'
+import { createClient } from '@supabase/supabase-js'
+
+/**
+ * Create a public Supabase client for cached queries (no cookies needed)
+ */
+function createPublicSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
 
 export interface Category {
   id: string
@@ -36,7 +47,7 @@ export async function getJewelryCategories(): Promise<Category[]> {
   return unstable_cache(
     async () => {
       try {
-        const supabase = await createServerSupabaseClient()
+        const supabase = createPublicSupabaseClient()
 
         const { data: categories, error } = await supabase
           .from('categories')
