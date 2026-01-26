@@ -267,7 +267,7 @@ function renderNewsletterTemplate(
           
           <!-- Content -->
           <div style="padding: 32px 24px;">
-            ${getTemplateContentHTML(type, data, baseUrl)}
+            ${getTemplateContentHTML(type, data)}
           </div>
           
           <!-- Footer -->
