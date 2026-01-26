@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/context/CartContext";
+import { SessionRefresher } from "@/components/SessionRefresher";
 
 export const metadata: Metadata = {
   title: "Centurion - Premium Jewelry & Accessories",
@@ -47,6 +49,9 @@ export default function RootLayout({
         />
       </head>
       <body className={`antialiased ${playfair.variable} ${lato.variable} font-sans`}>
+        <Suspense fallback={null}>
+          <SessionRefresher />
+        </Suspense>
         <CartProvider>
           <NavBar />
           {children}

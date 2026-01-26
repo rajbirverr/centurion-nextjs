@@ -2,8 +2,8 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import NewsletterTemplate from '@/components/newsletter/NewsletterTemplate'
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// Note: dynamic and revalidate are not compatible with cacheComponents
+// Newsletter pages are always dynamic by nature, handled by cacheComponents
 
 const newsletterTypes = [
   'welcome',

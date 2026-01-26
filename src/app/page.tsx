@@ -14,6 +14,9 @@ export const metadata = {
   description: 'Centurion makes jewelry that\'s playful, pretty, and totally extra — for days when you wanna shine like you mean it.',
 };
 
+// Note: revalidate is not compatible with cacheComponents
+// Caching is handled automatically by cacheComponents
+
 export default async function HomePage() {
   // Fetch all data in parallel on the server
   const [homepageData, homepageSetsData] = await Promise.all([

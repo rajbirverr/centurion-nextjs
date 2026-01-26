@@ -7,7 +7,7 @@ interface EditProductPageProps {
   params: Promise<{ id: string }>
 }
 
-export const dynamic = 'force-dynamic'
+// Note: dynamic is not compatible with cacheComponents
 
 export default async function EditProductPage({ params }: EditProductPageProps) {
   const { id } = await params

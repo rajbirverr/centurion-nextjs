@@ -8,8 +8,10 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '10mb', // Increase limit for image uploads
     },
-    optimizeCss: true, // Optimize CSS output
+    optimizeCss: true, // Optimize CSS output - requires 'critters' package
   },
+  // Enable Partial Prerendering via cacheComponents
+  cacheComponents: true,
   
   images: {
     remotePatterns: [

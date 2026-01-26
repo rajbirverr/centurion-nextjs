@@ -5,6 +5,9 @@ import { getFooterData } from '@/lib/actions/footer'
 import { addSubscriber } from '@/lib/actions/newsletter'
 import Link from 'next/link'
 
+// Calculate year at module level to avoid dynamic date issues
+const CURRENT_YEAR = new Date().getFullYear()
+
 const Footer = () => {
   const [email, setEmail] = useState('')
   const [footerData, setFooterData] = useState<any>(null)
@@ -287,7 +290,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-[#cccbce] pt-6 flex flex-col md:flex-row justify-between items-center">
-          <div className="text-xs mb-4 md:mb-0">&copy; {new Date().getFullYear()} {brandName}. {copyrightText}</div>
+          <div className="text-xs mb-4 md:mb-0">&copy; {CURRENT_YEAR} {brandName}. {copyrightText}</div>
           <div className="flex space-x-4 text-xs">
             <Link href="#" className="hover:underline transition-all">Accessibility</Link>
             <Link href="#" className="hover:underline transition-all">Terms of Service</Link>

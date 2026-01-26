@@ -7,7 +7,7 @@ interface OrderDetailPageProps {
   params: Promise<{ id: string }>
 }
 
-export const dynamic = 'force-dynamic'
+// Note: dynamic is not compatible with cacheComponents
 
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleString('en-US', {

@@ -6,7 +6,7 @@ import HeroImageUpload from '@/components/admin/HeroImageUpload'
 import ShowcaseCardImageUpload from '@/components/admin/ShowcaseCardImageUpload'
 import HomepageCarouselProducts from '@/components/admin/HomepageCarouselProducts'
 
-export const dynamic = 'force-dynamic'
+// Note: dynamic is not compatible with cacheComponents
 
 export default async function AdminDashboardPage() {
   const supabase = await createServerSupabaseClient()

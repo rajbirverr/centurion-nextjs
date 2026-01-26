@@ -4,7 +4,8 @@ import { getAllCategories } from '@/lib/actions/categories'
 import CarouselCheckboxes from '@/components/admin/CarouselCheckboxes'
 import SalePageCheckbox from '@/components/admin/SalePageCheckbox'
 
-export const dynamic = 'force-dynamic'
+// Note: dynamic is not compatible with cacheComponents
+// Admin pages are always dynamic by nature
 
 export default async function AdminProductsPage() {
   const products = await getAllProducts()

@@ -1,14 +1,15 @@
 import { Metadata } from 'next'
+import { unstable_cache } from 'next/cache'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import ProductGridClient from '../all-products/ProductGridClient'
 import { RecommendedProducts, Product } from '@/components/allproducts'
 import { getFilterConfigs } from '@/lib/actions/filter-config'
 import { getJewelryCategories } from '@/lib/actions/categories'
+import { getProductImages, getCategoriesByIds } from '@/lib/actions/products-cached'
 import SaleCategoryFilterBar from '@/components/allproducts/SaleCategoryFilterBar'
 
-// Force dynamic rendering
-export const dynamic = 'force-dynamic'
-export const revalidate = 3600 // Revalidate every hour
+// Note: revalidate is not compatible with cacheComponents
+// Caching is handled automatically by cacheComponents and unstable_cache
 
 export const metadata: Metadata = {
   title: 'Sale | Centurion - Discounted Premium Jewelry',
@@ -29,91 +30,72 @@ export default async function SalePage({
 }: {
   searchParams: Promise<{ category?: string }>
 }) {
-  const supabase = await createServerSupabaseClient()
   const params = await searchParams
 
-  // Get category ID if category slug is provided
+  // Cache category lookup by slug
+  const getCategoryBySlug = unstable_cache(
+    async (slug: string) => {
+      const supabase = await createServerSupabaseClient()
+      const { data, error } = await supabase
+        .from('categories')
+        .select('id, name, slug')
+        .eq('slug', slug)
+        .single()
+      return { data, error }
+    },
+    [`category-by-slug-${params.category || 'none'}`],
+    { revalidate: 3600, tags: ['categories'] }
+  )
+
+  // Get category ID if category slug is provided (cached)
   let categoryId: string | null = null
   if (params.category) {
-    const { data: category, error: categoryError } = await supabase
-      .from('categories')
-      .select('id, name, slug')
-      .eq('slug', params.category)
-      .single()
-
-    if (categoryError) {
-      console.error('[SALE PAGE CATEGORY] Error fetching category:', {
-        slug: params.category,
-        error: categoryError
-      })
-    }
-
-    if (category && category.id) {
-      categoryId = category.id
+    const categoryResult = await getCategoryBySlug(params.category).catch(() => ({ data: null, error: null }))
+    if (categoryResult.data && categoryResult.data.id) {
+      categoryId = categoryResult.data.id
     }
   }
 
-  // Build query - filter by sale page flag AND category if provided
-  let query = supabase
-    .from('products')
-    .select('*')
-    .eq('status', 'published')
-    .eq('in_sale_page', true)
+  // Cache sale products query
+  const getSaleProducts = unstable_cache(
+    async (categoryId: string | null) => {
+      const supabase = await createServerSupabaseClient()
+      let query = supabase
+        .from('products')
+        .select('*')
+        .eq('status', 'published')
+        .eq('in_sale_page', true)
 
-  // Filter by category_id if category is provided and found
-  if (categoryId) {
-    query = query.eq('category_id', categoryId)
-  } else if (params.category) {
-    // Category slug was provided but not found - return empty results
-    query = query.eq('category_id', '00000000-0000-0000-0000-000000000000')
-  }
+      if (categoryId) {
+        query = query.eq('category_id', categoryId)
+      }
 
-  let productsResult = await query.order('created_at', { ascending: false })
-  let products = productsResult.data
-  let error = productsResult.error
+      const { data, error } = await query.order('created_at', { ascending: false })
+      return { data: data || [], error }
+    },
+    [`sale-products-${categoryId || 'all'}`],
+    { revalidate: 300, tags: ['products', 'sale-products'] }
+  )
 
-  // Handle errors gracefully
-  if (error) {
-    console.error('[SALE PAGE] Error fetching products:', error)
-  }
+  // Fetch sale products (cached)
+  const productsResult = await getSaleProducts(categoryId)
+  const safeProducts = productsResult.data || []
 
-  // Ensure products is always an array
-  const safeProducts = products || []
-
-  // Fetch images for products - only if we have products
-  let images: Array<{ product_id: string; image_url: string; is_primary: boolean }> = []
+  // Fetch images and categories in parallel using cached functions
   const productIds = safeProducts.map(p => p.id)
-
-  if (productIds.length > 0) {
-    const { data: imagesData, error: imagesError } = await supabase
-      .from('product_images')
-      .select('product_id, image_url, is_primary')
-      .in('product_id', productIds)
-      .eq('is_primary', true)
-
-    if (imagesError) {
-      console.error('[SALE PAGE IMAGES] Error fetching images:', imagesError)
-    } else {
-      images = imagesData || []
-    }
-  }
-
-  // Fetch categories for products that have category_id (for filter bar)
   const categoryIds = [...new Set(safeProducts.map(p => p.category_id).filter((id): id is string => Boolean(id)))]
-  let categoriesData: Array<{ id: string; name: string; slug: string }> = []
 
-  if (categoryIds.length > 0) {
-    const { data, error: categoriesError } = await supabase
-      .from('categories')
-      .select('id, name, slug')
-      .in('id', categoryIds)
+  const [imagesData, categoriesData] = await Promise.all([
+    productIds.length > 0 ? getProductImages(productIds) : Promise.resolve([]),
+    categoryIds.length > 0 ? getCategoriesByIds(categoryIds) : Promise.resolve([])
+  ])
 
-    if (categoriesError) {
-      console.error('[SALE PAGE CATEGORIES] Error fetching categories:', categoriesError)
-    } else {
-      categoriesData = data || []
-    }
-  }
+  // Convert images to expected format
+  const images = imagesData.map((img: any) => ({
+    product_id: img.product_id,
+    image_url: img.image_url,
+    is_primary: img.is_primary
+  }))
 
   // Fetch all jewelry categories for the filter bar (to show all categories, not just those with sale products)
   const allCategories = await getJewelryCategories()

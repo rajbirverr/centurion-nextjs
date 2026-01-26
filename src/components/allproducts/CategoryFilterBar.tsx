@@ -25,6 +25,7 @@ export default function CategoryFilterBar({ categories }: CategoryFilterBarProps
             {/* SHOP ALL Button - Always first */}
             <Link
               href="/all-products"
+              prefetch={true}
               className={`flex-shrink-0 px-5 py-3 rounded-full text-xs uppercase tracking-wide font-medium transition-colors duration-200 ${
                 !activeCategory
                   ? 'bg-[#5a4c46] text-white border border-[#5a4c46]'
@@ -41,6 +42,7 @@ export default function CategoryFilterBar({ categories }: CategoryFilterBarProps
                 <Link
                   key={category.id}
                   href={`/all-products?category=${category.slug}`}
+                  prefetch={true}
                   className={`flex-shrink-0 px-5 py-3 rounded-full text-xs uppercase tracking-wide font-medium transition-colors duration-200 ${
                     isActive
                       ? 'bg-[#5a4c46] text-white border border-[#5a4c46]'

@@ -1,4 +1,6 @@
 import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 
 export default async function AccountLayout({
   children,
@@ -9,12 +11,23 @@ export default async function AccountLayout({
   const pathname = headersList.get('x-pathname') || ''
   
   // Allow access to register page without authentication
-  // The middleware sets x-pathname header for /account/register
   if (pathname === '/account/register') {
     return <>{children}</>
   }
 
-  // For all other account routes, middleware has already verified authentication
-  // No need to check again or redirect - just render the layout
+  // Server Layout Guard: Check authentication for account routes
+  const supabase = await createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) {
+    const loginUrl = '/login'
+    const searchParams = new URLSearchParams()
+    const returnUrl = pathname
+    if (returnUrl !== '/account') {
+      searchParams.set('return_url', encodeURIComponent(returnUrl))
+    }
+    redirect(loginUrl + (searchParams.toString() ? `?${searchParams.toString()}` : ''))
+  }
+
   return <>{children}</>
 }

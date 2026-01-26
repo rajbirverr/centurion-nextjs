@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, unstable_cache } from 'next/cache'
 import { getServerUser } from '@/lib/supabase/server'
 import { createAdminClient, verifyAdmin } from '@/lib/supabase/admin'
 
@@ -17,33 +17,42 @@ export interface FilterConfig {
 }
 
 export async function getFilterConfigs(): Promise<{ success: boolean; data?: FilterConfig[]; error?: string }> {
-  try {
-    const supabase = createAdminClient()
-    const { data, error } = await supabase
-      .from('filter_config')
-      .select('*')
-      .eq('is_active', true)
-      .order('filter_type', { ascending: true })
-      .order('sort_order', { ascending: true })
+  return unstable_cache(
+    async () => {
+      try {
+        const supabase = createAdminClient()
+        const { data, error } = await supabase
+          .from('filter_config')
+          .select('*')
+          .eq('is_active', true)
+          .order('filter_type', { ascending: true })
+          .order('sort_order', { ascending: true })
 
-    if (error) {
-      // If table doesn't exist or other error, return empty array instead of failing
-      // This allows the page to load without filter configs
-      if (error.code === 'PGRST116' || error.message?.includes('does not exist')) {
-        // Table doesn't exist - return empty array
+        if (error) {
+          // If table doesn't exist or other error, return empty array instead of failing
+          // This allows the page to load without filter configs
+          if (error.code === 'PGRST116' || error.message?.includes('does not exist')) {
+            // Table doesn't exist - return empty array
+            return { success: true, data: [] }
+          }
+          console.error('Error fetching filter configs:', error)
+          // Still return success with empty array to prevent page crash
+          return { success: true, data: [] }
+        }
+
+        return { success: true, data: (data || []) as FilterConfig[] }
+      } catch (error: any) {
+        // Catch any unexpected errors and return empty array to prevent page crash
+        console.error('Error in getFilterConfigs:', error)
         return { success: true, data: [] }
       }
-      console.error('Error fetching filter configs:', error)
-      // Still return success with empty array to prevent page crash
-      return { success: true, data: [] }
+    },
+    ['filter-configs'],
+    {
+      revalidate: 3600, // Cache for 1 hour
+      tags: ['filter-configs']
     }
-
-    return { success: true, data: (data || []) as FilterConfig[] }
-  } catch (error: any) {
-    // Catch any unexpected errors and return empty array to prevent page crash
-    console.error('Error in getFilterConfigs:', error)
-    return { success: true, data: [] }
-  }
+  )()
 }
 
 export async function getAllFilterConfigs(): Promise<FilterConfig[]> {

@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { getAllOrders } from '@/lib/actions/orders'
 import { Badge } from '@/components/admin/ui'
 
-export const dynamic = 'force-dynamic'
+// Note: dynamic is not compatible with cacheComponents
 
 export default async function AdminOrdersPage() {
   const orders = await getAllOrders()

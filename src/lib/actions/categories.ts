@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, unstable_cache } from 'next/cache'
 import { createServerSupabaseClient, getServerUser } from '@/lib/supabase/server'
 import { createAdminClient, verifyAdmin } from '@/lib/supabase/admin'
 
@@ -30,26 +30,36 @@ export interface CategoryWithSubcategories extends Category {
 /**
  * Fetches jewelry categories only (for filter bar)
  * Returns all categories ordered by sort_order
+ * Cached for 1 hour for better performance
  */
 export async function getJewelryCategories(): Promise<Category[]> {
-  try {
-    const supabase = await createServerSupabaseClient()
+  return unstable_cache(
+    async () => {
+      try {
+        const supabase = await createServerSupabaseClient()
 
-    const { data: categories, error } = await supabase
-      .from('categories')
-      .select('id, name, slug, sort_order')
-      .order('sort_order', { ascending: true })
+        const { data: categories, error } = await supabase
+          .from('categories')
+          .select('id, name, slug, sort_order')
+          .order('sort_order', { ascending: true })
 
-    if (error) {
-      console.error('Error fetching categories:', error)
-      return []
+        if (error) {
+          console.error('Error fetching categories:', error)
+          return []
+        }
+
+        return (categories || []) as Category[]
+      } catch (error) {
+        console.error('Error in getJewelryCategories:', error)
+        return []
+      }
+    },
+    ['jewelry-categories'],
+    {
+      revalidate: 3600, // Cache for 1 hour
+      tags: ['categories']
     }
-
-    return (categories || []) as Category[]
-  } catch (error) {
-    console.error('Error in getJewelryCategories:', error)
-    return []
-  }
+  )()
 }
 
 export interface CreateCategoryData {

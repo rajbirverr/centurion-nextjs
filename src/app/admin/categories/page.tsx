@@ -4,7 +4,7 @@ import { deleteCategory } from '@/lib/actions/categories'
 import { Button, Badge } from '@/components/admin/ui'
 import DeleteCategoryButton from '@/components/admin/DeleteCategoryButton'
 
-export const dynamic = 'force-dynamic'
+// Note: dynamic is not compatible with cacheComponents
 
 export default async function AdminCategoriesPage() {
   const categories = await getAllCategories()

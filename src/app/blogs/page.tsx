@@ -9,7 +9,8 @@ export const metadata = {
     description: 'Discover the latest jewelry trends, style guides, and expert advice from The Centurion Edit.',
 };
 
-export const revalidate = 300; // Revalidate every 5 minutes
+// Note: revalidate is not compatible with cacheComponents
+// Caching is handled automatically by cacheComponents and unstable_cache
 
 export default async function BlogIndexPage({ searchParams }: { searchParams?: Promise<{ category?: string }> }) {
     const params = await searchParams;

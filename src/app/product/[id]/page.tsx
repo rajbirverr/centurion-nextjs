@@ -1,9 +1,12 @@
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import { Suspense } from 'react'
-import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { getProductBySlug, getProductImagesByProductId, getCategoryById } from '@/lib/actions/product-cached'
 import ProductDetailWrapper from '@/components/product/ProductDetailWrapper'
 import ReviewsSection from '@/components/reviews/ReviewsSection'
+
+// Note: revalidate is not compatible with cacheComponents
+// Caching is handled automatically by cacheComponents and unstable_cache
 
 interface ProductDetailPageProps {
   params: Promise<{ id: string }>
@@ -11,14 +14,7 @@ interface ProductDetailPageProps {
 
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
   const { id } = await params
-  const supabase = await createServerSupabaseClient()
-  
-  const { data: product } = await supabase
-    .from('products')
-    .select('name, description, seo_title, seo_description')
-    .eq('slug', id)
-    .eq('status', 'published')
-    .single()
+  const product = await getProductBySlug(id)
 
   if (!product) {
     return {
@@ -34,42 +30,19 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const { id } = await params
-  const supabase = await createServerSupabaseClient()
 
-  // Fetch product by slug
-  // Note: watermark_enabled may not exist yet if migration hasn't been run
-  // We'll default to true in the component if not present
-  const { data: product, error: productError } = await supabase
-    .from('products')
-    .select('*')
-    .eq('slug', id)
-    .eq('status', 'published')
-    .single()
+  // Fetch product by slug (cached)
+  const product = await getProductBySlug(id)
 
-  if (productError || !product) {
+  if (!product) {
     notFound()
   }
 
-  // Fetch product images
-  const { data: images } = await supabase
-    .from('product_images')
-    .select('image_url, alt_text, is_primary, sort_order')
-    .eq('product_id', product.id)
-    .order('is_primary', { ascending: false })
-    .order('sort_order', { ascending: true })
-
-  const productImages = images?.map(img => img.image_url) || []
-
-  // Fetch category if available
-  let category = null
-  if (product.category_id) {
-    const { data: categoryData } = await supabase
-      .from('categories')
-      .select('id, name, slug')
-      .eq('id', product.category_id)
-      .single()
-    category = categoryData
-  }
+  // Fetch product images and category in parallel (both cached)
+  const [productImages, category] = await Promise.all([
+    getProductImagesByProductId(product.id),
+    product.category_id ? getCategoryById(product.category_id) : Promise.resolve(null)
+  ])
 
   return (
     <div className="min-h-screen bg-white">

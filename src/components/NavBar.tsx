@@ -571,32 +571,6 @@ const NavBar: React.FC<NavBarProps> = ({ onNavigate }) => {
       >
         <div className="overflow-y-auto" style={{ maxHeight: `calc(100vh - ${mobileMenuTop || (navHeight || 73)}px)` }}>
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-6">
-          {/* Search input */}
-          <div className="relative mb-8">
-              <form 
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const formData = new FormData(e.currentTarget);
-                  const searchQuery = formData.get('search') as string;
-                  if (searchQuery && searchQuery.trim()) {
-                    window.location.href = `/all-products?search=${encodeURIComponent(searchQuery.trim())}`;
-                  }
-                }}
-              >
-                <input
-                  type="text"
-                  name="search"
-                  placeholder="Search"
-                  className="w-full bg-gray-50 border border-gray-100 rounded-full pl-12 pr-4 py-3.5 text-sm text-[#5a4c46] placeholder-gray-400 focus:outline-none focus:border-[#5a4c46]/30 transition-colors"
-                />
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-              </form>
-            </div>
-
           {/* Categories Section */}
           {categories.length > 0 && (
             <div className="mb-6">

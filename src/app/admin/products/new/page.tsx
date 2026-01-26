@@ -1,6 +1,6 @@
 import ProductForm from '@/components/admin/ProductForm'
 
-export const dynamic = 'force-dynamic'
+// Note: dynamic is not compatible with cacheComponents
 
 export default function NewProductPage() {
   return (
