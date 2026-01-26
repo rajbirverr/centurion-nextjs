@@ -108,12 +108,14 @@ export async function uploadHeroImageToStorage(file: File): Promise<{ success: b
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    // Upload to Supabase Storage
+    // Upload to Supabase Storage - NEVER use upsert, always create new versioned file
+    // This ensures immutable URLs for aggressive caching
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('images')
       .upload(filePath, buffer, {
         contentType: file.type,
-        upsert: true
+        upsert: false, // Never overwrite - creates new versioned file
+        cacheControl: '31536000' // 1 year cache - immutable
       })
 
     if (uploadError) {
@@ -238,11 +240,13 @@ export async function uploadShowcaseCardImageToStorage(file: File): Promise<{ su
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
+    // Upload to Supabase Storage - NEVER use upsert, always create new versioned file
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('images')
       .upload(filePath, buffer, {
         contentType: file.type,
-        upsert: true
+        upsert: false, // Never overwrite - creates new versioned file
+        cacheControl: '31536000' // 1 year cache - immutable
       })
 
     if (uploadError) {

@@ -33,7 +33,8 @@ export async function uploadProductImageToStorage(file: File): Promise<{ success
       .from('images')
       .upload(fileName, buffer, {
         contentType: file.type,
-        upsert: false
+        upsert: false,
+        cacheControl: '31536000' // 1 year cache - immutable URLs
       })
 
     if (uploadError) {

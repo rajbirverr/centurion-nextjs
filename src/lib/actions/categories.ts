@@ -310,11 +310,11 @@ export async function uploadCategoryImageToStorage(file: File): Promise<{ succes
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
     const filePath = `categories/${fileName}`
 
-    // Upload to Supabase Storage
+    // Upload to Supabase Storage - aggressive caching for immutable URLs
     const { error: uploadError, data } = await supabase.storage
       .from('images')
       .upload(filePath, file, {
-        cacheControl: '3600',
+        cacheControl: '31536000', // 1 year cache - immutable
         upsert: false
       })
 

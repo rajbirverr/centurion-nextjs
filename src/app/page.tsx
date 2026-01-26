@@ -1,12 +1,15 @@
 import { Suspense } from 'react'
+import { Metadata } from 'next'
 import HomepageHero from '@/components/homepage/HomepageHero'
 import HomepageShowcase from '@/components/homepage/HomepageShowcase'
 import HomepageProductGrid from '@/components/homepage/HomepageProductGrid'
 import HomepageSetsSection from '@/components/homepage/HomepageSetsSection'
 import HomepageCategoryCarousel from '@/components/homepage/HomepageCategoryCarousel'
 import { getHomepageSetsData } from '@/lib/actions/homepage-sets'
+import { getHeroImageUrl } from '@/lib/actions/homepage-hero'
+import { getShowcaseCardImageUrl } from '@/lib/actions/homepage-showcase'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'CENTURION - Luxury Jewelry & Shine',
   description: 'Centurion makes jewelry that\'s playful, pretty, and totally extra — for days when you wanna shine like you mean it.',
 };

@@ -28,10 +28,16 @@ const nextConfig: NextConfig = {
         hostname: 'm.media-amazon.com',
       },
     ],
-    // Optimize image loading
-    formats: ['image/avif', 'image/webp'],
+    // Optimize image loading - Skims-level optimization
+    formats: ['image/avif', 'image/webp'], // Modern formats first
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Enable image optimization (Next.js handles AVIF/WebP conversion)
+    minimumCacheTTL: 31536000, // 1 year cache for optimized images
+    // Disable unoptimized images in production for better performance
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   
   // Compiler optimizations

@@ -5,6 +5,7 @@ import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/context/CartContext";
 import { SessionRefresher } from "@/components/SessionRefresher";
+import PreloadImages from "@/components/homepage/PreloadImages";
 
 export const metadata: Metadata = {
   title: "Centurion - Premium Jewelry & Accessories",
@@ -47,6 +48,10 @@ export default function RootLayout({
           type="font/woff2"
           crossOrigin="anonymous"
         />
+        {/* Preload critical homepage images for instant reload */}
+        <Suspense fallback={null}>
+          <PreloadImages />
+        </Suspense>
       </head>
       <body className={`antialiased ${playfair.variable} ${lato.variable} font-sans`}>
         <Suspense fallback={null}>

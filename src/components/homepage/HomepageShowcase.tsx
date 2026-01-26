@@ -10,6 +10,16 @@ async function ShowcaseContent() {
     getShowcaseCardImageUrl(),
     getShineCarouselProducts()
   ])
+  
+  // Preload showcase image for instant reload
+  const preloadLinks = showcaseCardImageUrl ? (
+    <link
+      rel="preload"
+      as="image"
+      href={showcaseCardImageUrl}
+      fetchPriority="high"
+    />
+  ) : null
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

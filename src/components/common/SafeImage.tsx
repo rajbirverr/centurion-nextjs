@@ -60,7 +60,7 @@ export default function SafeImage({
     )
   }
 
-  // Use Next.js Image component
+  // Use Next.js Image component with fetchpriority for critical images
   if (fill) {
     return (
       <Image
@@ -72,6 +72,7 @@ export default function SafeImage({
         sizes={sizes}
         style={style}
         unoptimized={unoptimized}
+        fetchPriority={priority ? 'high' : 'auto'}
         onError={() => {
           setUseFallback(true)
           setImgError(true)
@@ -92,6 +93,7 @@ export default function SafeImage({
       sizes={sizes}
       style={style}
       unoptimized={unoptimized}
+      fetchPriority={priority ? 'high' : 'auto'}
       onError={() => {
         setUseFallback(true)
         setImgError(true)
